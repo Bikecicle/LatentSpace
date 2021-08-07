@@ -1,0 +1,27 @@
+{
+	"folders": [
+		{
+			"name": "LatentSpace",
+			"path": "."
+		},
+		{
+			"name": "UE4",
+			"path": "E:\\Program Files\\UE_4.25"
+		}
+	],
+	"settings": {
+		"typescript.tsc.autoDetect": "off",
+		"files.associations": {
+			"random": "cpp",
+			"*.ipp": "cpp",
+			"queue": "cpp",
+			"stack": "cpp"
+		}
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-vscode.cpptools",
+			"ms-dotnettools.csharp"
+		]
+	}
+}
