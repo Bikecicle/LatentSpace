@@ -15,6 +15,11 @@ public:
 	enum EFace { Front, Back, Left, Right, Top, Bottom };
 
 	EFace Face;
-	double X;
-	double Y;
+	int FaceX;
+	int FaceY;
+	int TileX;
+	int TileY;
+
+	static int GetRotation(EFace Face1, EFace Face2);
+	FTileCoord Step();
 };

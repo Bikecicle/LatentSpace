@@ -7,7 +7,7 @@ FTerraGANTile::FTerraGANTile()
 {
 }
 
-std::string FTerraGANTile::GenerateQuery()
+FString FTerraGANTile::GenerateQuery()
 {
 	return "boop";
 }

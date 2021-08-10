@@ -9,7 +9,7 @@ FFractal::FFractal()
 
 void FFractal::AddFold(IFold* Fold)
 {
-	Folds.push_back(Fold);
+	Folds.Add(Fold);
 }
 
 void FFractal::SetBase(IBaseShape* Base)

@@ -13,7 +13,7 @@
 class LATENTSPACE_API FFractal
 {
 private:
-	std::vector<IFold*> Folds;
+	TArray<IFold*> Folds;
 	IBaseShape* BaseShape;
 public:
 	FFractal();
