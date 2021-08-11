@@ -4,22 +4,31 @@
 
 #include "CoreMinimal.h"
 
-/**
- * 
- */
+/** A set of coordinates representing a tile on the surface of a cube */
 class LATENTSPACE_API FTileCoord
 {
 public:
 	FTileCoord();
 	
-	enum EFace { Front, Back, Left, Right, Top, Bottom };
+	enum EFace { Front, Back, Left, Right, Top, Bottom, None };
 
+	/** Denotes on which face of the cube the tile lies */
 	EFace Face;
+	/** The X position of the tile relative to the cube face */
 	int FaceX;
+	/** The Y position of the tile relative to the cube face */
 	int FaceY;
+	/** The X position within the tile */
 	int TileX;
+	/** The Y position within the tile */
 	int TileY;
 
-	static int GetRotation(EFace Face1, EFace Face2);
-	FTileCoord Step();
+	/**
+	 * Get the tile relative to this tile given an X and Y displacement and considering passage between faces.
+	 * @param StepX - Distance to move in the X direction with respect to this tile's orientation (-FaceResolution, FaceResolution)
+	 * @param StepY - Distance to move in the Y direction with respect to this tile's orientation (-FaceResolution, FaceResolution)
+	 * @param FaceResolution - The width of the cube faces measured in number of tiles
+	 * @return The new tile
+	 */
+	FTileCoord Step(int StepX, int StepY, int FaceResolution);
 };

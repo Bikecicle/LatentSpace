@@ -8,19 +8,23 @@
 #include "MachineLearningRemoteComponent.h"
 
 
-/**
- * 
- */
+/** Represents a sphere where each point on the surface is mapped to a tile on a cube */
 class LATENTSPACE_API FTileSphere
 {
 public:
+	/** Width of a cube face in number of tiles */
 	static const int FaceResolution = 4;
+	/** Number of sides on a cube */
 	static const int SideCount = 6;
 
 private:
+	/** Position of the center of the sphere */
 	FVector Center;
+	/** Radius of the sphere in voxels */
 	float Radius;
+	/** Seed to be passed to any contained noise generators */
 	unsigned int Seed;
+	/** Amount to overlap tiles when blending contents */
 	int Overlap;
 
 	FTerraGANTile* Sides[SideCount][FaceResolution][FaceResolution];
