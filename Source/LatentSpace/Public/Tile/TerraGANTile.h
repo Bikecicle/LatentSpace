@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Utils/NoiseManager.h"
 
 /**
  * 
@@ -15,8 +16,9 @@ public:
 	static const int LatentSize = 128;
 	static const int TileResolution = 256;
 
-	float Latent[LatentSize];
 	float Terrain[TileResolution][TileResolution];
+	bool bIsGenerated = False;
 
 	FString GenerateQuery();
+	float GetValueAt(FTileCoord TileCoord, unsigned int Seed, UMachineLearningRemoteComponent* MachineLearningRemoteComponent);
 };

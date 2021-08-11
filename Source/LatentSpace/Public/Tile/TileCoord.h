@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Utils/NoiseManager.h"
 
 /** A set of coordinates representing a tile on the surface of a cube */
 class LATENTSPACE_API FTileCoord
@@ -31,4 +32,6 @@ public:
 	 * @return The new tile
 	 */
 	FTileCoord Step(int StepX, int StepY, int FaceResolution);
+
+	unsigned int GetSeed(unsigned int SphereSeed);
 };

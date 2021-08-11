@@ -27,7 +27,7 @@ private:
 	/** Amount to overlap tiles when blending contents */
 	int Overlap;
 
-	FTerraGANTile* Sides[SideCount][FaceResolution][FaceResolution];
+	FTerraGANTile* Tiles[SideCount][FaceResolution][FaceResolution];
 
 	UMachineLearningRemoteComponent* MachineLearningRemoteComponent;
 
@@ -37,7 +37,7 @@ public:
 	void Initiallize();
 
 	FTileCoord GetTileCoords(FVector Position) const;
-	float GetValue(FTileCoord TileCoord) const;
+	float GetValueAt(FTileCoord TileCoord) const;
 	float GetSignedDistance(FVector4 Position) const;
 	FColor ColorCode(FVector4 Position) const;
 };

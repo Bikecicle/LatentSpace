@@ -241,3 +241,8 @@ FTileCoord FTileCoord::Step(int StepX, int StepY, int FaceResolution)
 
     return NewTileCoord;
 }
+
+unsigned int FTileCoord::GetSeed(unsigned int SphereSeed)
+{
+    return NoiseManager::GetValueNoise3D(Face, FaceX, FaceY, SphereSeed);
+}

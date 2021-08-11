@@ -180,9 +180,9 @@ FTileCoord FTileSphere::GetTileCoords(FVector Position) const
     return TileCoord;
 }
 
-float FTileSphere::GetValue(FTileCoord TileCoord) const
+float FTileSphere::GetValueAt(FTileCoord TileCoord) const
 {
-   return 0.0f;
+    FTerraGANTile Tile = Tiles[TileCoord.Face][TileCoord.FaceX][TileCoord.FaceY];
 }
 
 
