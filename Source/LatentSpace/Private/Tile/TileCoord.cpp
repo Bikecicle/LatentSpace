@@ -18,7 +18,7 @@ FTileCoord FTileCoord::Step(int StepX, int StepY, int FaceResolution)
     // Stepping over east edge
     if (FaceX + StepX >= FaceResolution)
     {
-        bIsHorizontalEdge = True;
+        bIsHorizontalEdge = true;
         NewTileCoord.FaceX = FaceX + StepX - FaceResolution;
 
         switch (Face)
@@ -60,7 +60,7 @@ FTileCoord FTileCoord::Step(int StepX, int StepY, int FaceResolution)
     // Stepping over west edge
     else if (FaceX + StepX < 0)
     {
-        bIsHorizontalEdge = True;
+        bIsHorizontalEdge = true;
         NewTileCoord.FaceX = FaceX + StepX + FaceResolution;
 
         switch (Face)
@@ -102,14 +102,14 @@ FTileCoord FTileCoord::Step(int StepX, int StepY, int FaceResolution)
     // Stepping within horizontal bounds
     else
     {
-        bIsHorizontalEdge = False;
+        bIsHorizontalEdge = false;
         NewTileCoord.TileX = TileX + StepX;
     }
 
     // Stepping over north edge
     if (FaceY + StepY >= FaceResolution)
     {
-        bIsVerticalEdge = True;
+        bIsVerticalEdge = true;
         NewTileCoord.TileY = TileY + StepY - FaceResolution;
 
         switch (Face)
@@ -151,7 +151,7 @@ FTileCoord FTileCoord::Step(int StepX, int StepY, int FaceResolution)
     // Stepping over south edge
     else if (FaceY + StepY < 0)
     {
-        bIsVerticalEdge = True;
+        bIsVerticalEdge = true;
         NewTileCoord.FaceY = FaceY + StepY + FaceResolution;
 
         switch (Face)
@@ -193,7 +193,7 @@ FTileCoord FTileCoord::Step(int StepX, int StepY, int FaceResolution)
     // Stepping within vertical bounds
     else
     {
-        bIsVerticalEdge = False;
+        bIsVerticalEdge = false;
         NewTileCoord.FaceY = FaceY + StepY;
     }
 
@@ -244,5 +244,5 @@ FTileCoord FTileCoord::Step(int StepX, int StepY, int FaceResolution)
 
 unsigned int FTileCoord::GetSeed(unsigned int SphereSeed)
 {
-    return NoiseManager::GetValueNoise3D(Face, FaceX, FaceY, SphereSeed);
+    return FNoiseManager::GetValueNoise3D(Face, FaceX, FaceY, SphereSeed);
 }

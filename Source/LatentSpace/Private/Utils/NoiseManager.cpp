@@ -36,13 +36,10 @@ unsigned int FNoiseManager::GetValueNoise3D(int X, int Y, int Z, unsigned int Se
     return Squirrel3(X + (Y * PRIME1) + (Z * PRIME2), Seed);
 }
 
-TArray<float> FNoiseManager::GetLatent(int LatentSize, unsigned int Seed)
+void FNoiseManager::GenerateLatent(float Latent[], int LatentSize, unsigned int Seed)
 {
-    TArray<float> Latent;
-    for (int Position = 0; Position < LatentSize; Position++)
+    for (int i = 0; i < LatentSize; i++)
     {
-        float Component = (float) GetValueNoise1D(Position, Seed) / UINT_MAX * 2.0f - 1.0f;
-        Latent.Add(Component);
+        Latent[i] = (float) GetValueNoise1D(i, Seed) / UINT_MAX * 2.0f - 1.0f;
     }
-    return Latent;
 }

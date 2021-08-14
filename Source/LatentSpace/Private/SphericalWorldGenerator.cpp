@@ -14,7 +14,7 @@ TVoxelSharedRef<FVoxelGeneratorInstance> USphericalWorldGenerator::GetInstance()
 
 FSphericalWorldGeneratorInstance::FSphericalWorldGeneratorInstance(const USphericalWorldGenerator& MyGenerator)
 	: Super(&MyGenerator),
-	Sphere(FVector(0, 0, 0), 1000.0, 10, 0.5)
+	Sphere(FVector(0, 0, 0), 1000.0, 10)
 {
 }
 

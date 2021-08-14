@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Tile/TileCoord.h"
 #include "Utils/NoiseManager.h"
+#include "MachineLearningRemoteComponent.h"
 
 /**
  * 
@@ -17,8 +19,7 @@ public:
 	static const int TileResolution = 256;
 
 	float Terrain[TileResolution][TileResolution];
-	bool bIsGenerated = False;
+	bool bIsGenerated;
 
-	FString GenerateQuery();
-	float GetValueAt(FTileCoord TileCoord, unsigned int Seed, UMachineLearningRemoteComponent* MachineLearningRemoteComponent);
+	float GetValueAt(FTileCoord TileCoord, int FaceResolution, unsigned int SphereSeed, UMachineLearningRemoteComponent* MLComponent);
 };

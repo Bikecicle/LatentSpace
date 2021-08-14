@@ -7,14 +7,26 @@
 #include "FastNoise/VoxelFastNoise.inl"
 
 
-FTileSphere::FTileSphere(FVector pCenter, float pRadius, unsigned int pSeed, float OverlapFactor)
+FTileSphere::FTileSphere(FVector pCenter, float pRadius, unsigned int pSeed)
 {
 	Center = pCenter;
 	Radius = pRadius;
     Seed = pSeed;
-    Overlap = (int) (OverlapFactor * FTerraGANTile::TileResolution);
+
+    for (int i = 0; i < SideCount; i++)
+    {
+        for (int j = 0; j < FaceResolution; j++)
+        {
+            for (int k = 0; k < FaceResolution; k++)
+            {
+                Tiles[i][j][k] = new FTerraGANTile();
+            }
+        }
+    }
 
     MachineLearningRemoteComponent = NewObject<UMachineLearningRemoteComponent>();
+
+    UE_LOG(LogTemp, Log, TEXT("TileSphere constructed"));
 }
 
 void FTileSphere::Initiallize()
@@ -171,6 +183,9 @@ FTileCoord FTileSphere::GetTileCoords(FVector Position) const
         }
     }
 
+    FaceXScale = (FaceXScale + 1.0) / 2.0;
+    FaceYScale = (FaceYScale + 1.0) / 2.0;
+
     TileCoord.FaceX = (int) FMath::RoundToZero(FaceXScale * FaceResolution);
     TileCoord.FaceY = (int) FMath::RoundToZero(FaceYScale * FaceResolution);
 
@@ -182,7 +197,9 @@ FTileCoord FTileSphere::GetTileCoords(FVector Position) const
 
 float FTileSphere::GetValueAt(FTileCoord TileCoord) const
 {
-    FTerraGANTile Tile = Tiles[TileCoord.Face][TileCoord.FaceX][TileCoord.FaceY];
+    FTerraGANTile* Tile = Tiles[TileCoord.Face][TileCoord.FaceX][TileCoord.FaceY];
+    Tile->GetValueAt(TileCoord, FaceResolution, Seed, MachineLearningRemoteComponent);
+    return 0.0f;
 }
 
 
@@ -193,6 +210,7 @@ float FTileSphere::GetSignedDistance(FVector4 Position) const
     float Distance = Position3D.Size() - Radius;
 
     FTileCoord TileCoord = GetTileCoords(Position3D);
+    Distance += GetValueAt(TileCoord);
 
     return Distance;
 }

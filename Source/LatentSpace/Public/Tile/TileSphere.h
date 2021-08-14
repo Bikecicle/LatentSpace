@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Tile/TileCoord.h"
 #include "Tile/TerraGANTile.h"
-#include "MachineLearningRemoteComponent.h"
 
 
 /** Represents a sphere where each point on the surface is mapped to a tile on a cube */
@@ -24,15 +23,13 @@ private:
 	float Radius;
 	/** Seed to be passed to any contained noise generators */
 	unsigned int Seed;
-	/** Amount to overlap tiles when blending contents */
-	int Overlap;
 
 	FTerraGANTile* Tiles[SideCount][FaceResolution][FaceResolution];
 
 	UMachineLearningRemoteComponent* MachineLearningRemoteComponent;
 
 public:
-	FTileSphere(FVector pCenter, float pRadius, unsigned int pSeed, float OverlapFactor);
+	FTileSphere(FVector pCenter, float pRadius, unsigned int pSeed);
 
 	void Initiallize();
 

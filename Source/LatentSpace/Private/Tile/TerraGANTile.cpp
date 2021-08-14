@@ -7,12 +7,13 @@ FTerraGANTile::FTerraGANTile()
 {
 }
 
-float FTerraGanTile::GetValueAt(FTileCoord TileCoord, int FaceResolution, unsigned int SphereSeed, UMachineLearningRemoteComponent* MachineLearningRemoteComponent)
+float FTerraGANTile::GetValueAt(FTileCoord TileCoord, int FaceResolution, unsigned int SphereSeed, UMachineLearningRemoteComponent* MLComponent)
 {
 	if (!bIsGenerated)
 	{
-		TArray<float> Latents[3][3];
+		float Latents[3][3][LatentSize];
 		int TileIDs[3][3];
+
 		FTileCoord Neighbor;
 		int TileSeed;
 
@@ -29,9 +30,9 @@ float FTerraGanTile::GetValueAt(FTileCoord TileCoord, int FaceResolution, unsign
 					Neighbor = TileCoord.Step(StepX, StepY, FaceResolution);
 
 					// Neighboring tile is valid
-					if (Neighbor != FTileCoord::EFace::None)
+					if (Neighbor.Face != FTileCoord::EFace::None)
 					{
-						TileSeed = NoiseManager::GetValueNoise3D(Neighbor.Face, Neighbor.FaceX, Neighbor.FaceY, SphereSeed) / 2;
+						TileSeed = FNoiseManager::GetValueNoise3D(Neighbor.Face, Neighbor.FaceX, Neighbor.FaceY, SphereSeed) / 2;
 					}
 					// Neighboring tile is over a corner (leave empty by setting TileID to -1)
 					else
@@ -42,16 +43,44 @@ float FTerraGanTile::GetValueAt(FTileCoord TileCoord, int FaceResolution, unsign
 				// We are looking at the center tile
 				else
 				{
-					TileSeed = NoiseManager::GetValueNoise3D(TileCoord.Face, TileCoord.FaceX, TileCoord.FaceY, SphereSeed) / 2;
+					TileSeed = FNoiseManager::GetValueNoise3D(TileCoord.Face, TileCoord.FaceX, TileCoord.FaceY, SphereSeed) / 2;
 				}
 
-				Latents[i][j] = NoiseManager::GetLatent(LatentSize, TileSeed);
+				FNoiseManager::GenerateLatent(Latents[i][j], LatentSize, TileSeed);
 				TileIDs[i][j] = TileSeed;
 			}
 		}
 
-		// TODO: Package latents and tileIDs and send to machine learning remote server
+		// Flatten data
+		TArray<float> InputData;
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				for (int k = 0; k < LatentSize; k++)
+				{
+					InputData.Add(Latents[i][j][k]);
+				}
+			}
+		}
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				InputData.Add(TileIDs[i][j]);
+			}
+		}
+		
+		FString FunctionName = TEXT("onFloatArrayInput");
+
+		MLComponent->SendRawInput(InputData, [this](TArray<float>& ResultData)
+		{
+			//Now we got our results back, do something with them here
+		}, FunctionName);
+
+		bIsGenerated = true;
+		UE_LOG(LogTemp, Log, TEXT("Generated tile %d %d %d"), TileCoord.Face, TileCoord.FaceX, TileCoord.FaceY);
 	}
 
-	return Terrain[TileCoord.TileX][TileCoord.TileY];
+	return 0.0f;
 }

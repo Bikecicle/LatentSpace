@@ -6,17 +6,11 @@
 		},
 		{
 			"name": "UE4",
-			"path": "E:\\Program Files\\UE_4.25"
+			"path": "E:\\Program Files\\UE_4.26"
 		}
 	],
 	"settings": {
-		"typescript.tsc.autoDetect": "off",
-		"files.associations": {
-			"random": "cpp",
-			"*.ipp": "cpp",
-			"queue": "cpp",
-			"stack": "cpp"
-		}
+		"typescript.tsc.autoDetect": "off"
 	},
 	"extensions": {
 		"recommendations": [

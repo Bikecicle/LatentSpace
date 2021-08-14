@@ -26,5 +26,5 @@ public:
 	static unsigned int GetValueNoise2D(int X, int Y, unsigned int Seed);
 	static unsigned int GetValueNoise3D(int X, int Y, int Z, unsigned int Seed);
 
-	static TArray<float> GetLatent(int LatentSize, unsigned int Seed);
+	static void GenerateLatent(float Latent[], int LatentSize, unsigned int Seed);
 };
