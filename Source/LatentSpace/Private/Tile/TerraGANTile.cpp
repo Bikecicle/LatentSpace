@@ -3,11 +3,12 @@
 
 #include "Tile/TerraGANTile.h"
 
-FTerraGANTile::FTerraGANTile()
+FTerraGANTile::FTerraGANTile(UMachineLearningRemoteComponent* pMachineLearningRemoteComponent)
+	: MachineLearningRemoteComponent(pMachineLearningRemoteComponent)
 {
 }
 
-float FTerraGANTile::GetValueAt(FTileCoord TileCoord, int FaceResolution, unsigned int SphereSeed, UMachineLearningRemoteComponent* MLComponent)
+float FTerraGANTile::GetValueAt(FTileCoord TileCoord, int FaceResolution, unsigned int SphereSeed)
 {
 	if (!bIsGenerated)
 	{
@@ -71,12 +72,22 @@ float FTerraGANTile::GetValueAt(FTileCoord TileCoord, int FaceResolution, unsign
 			}
 		}
 		
-		FString FunctionName = TEXT("onFloatArrayInput");
-
-		MLComponent->SendRawInput(InputData, [this](TArray<float>& ResultData)
+		if (MachineLearningRemoteComponent != nullptr)
 		{
-			//Now we got our results back, do something with them here
-		}, FunctionName);
+			UE_LOG(LogTemp, Log, TEXT("Valid UMachineLearningRemoteComponent found"));
+			
+			FString FunctionName = TEXT("on_float_array_input");
+			
+			MachineLearningRemoteComponent->SendRawInput(InputData, [this](TArray<float>& ResultData)
+			{
+				//Now we got our results back, do something with them here
+			}, FunctionName);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("No valid UMachineLearningRemoteComponent found"));
+		}
+		
 
 		bIsGenerated = true;
 		UE_LOG(LogTemp, Log, TEXT("Generated tile %d %d %d"), TileCoord.Face, TileCoord.FaceX, TileCoord.FaceY);

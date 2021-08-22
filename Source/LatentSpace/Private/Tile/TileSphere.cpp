@@ -11,26 +11,21 @@ FTileSphere::FTileSphere(FVector pCenter, float pRadius, unsigned int pSeed)
 {
 	Center = pCenter;
 	Radius = pRadius;
-    Seed = pSeed;
+    Seed = pSeed;    
+}
 
+void FTileSphere::Init(UMachineLearningRemoteComponent* MachineLearningRemoteComponent)
+{
     for (int i = 0; i < SideCount; i++)
     {
         for (int j = 0; j < FaceResolution; j++)
         {
             for (int k = 0; k < FaceResolution; k++)
             {
-                Tiles[i][j][k] = new FTerraGANTile();
+                Tiles[i][j][k] = new FTerraGANTile(MachineLearningRemoteComponent);
             }
         }
     }
-
-    MachineLearningRemoteComponent = NewObject<UMachineLearningRemoteComponent>();
-
-    UE_LOG(LogTemp, Log, TEXT("TileSphere constructed"));
-}
-
-void FTileSphere::Initiallize()
-{
 }
 
 FTileCoord FTileSphere::GetTileCoords(FVector Position) const
@@ -198,7 +193,7 @@ FTileCoord FTileSphere::GetTileCoords(FVector Position) const
 float FTileSphere::GetValueAt(FTileCoord TileCoord) const
 {
     FTerraGANTile* Tile = Tiles[TileCoord.Face][TileCoord.FaceX][TileCoord.FaceY];
-    Tile->GetValueAt(TileCoord, FaceResolution, Seed, MachineLearningRemoteComponent);
+    Tile->GetValueAt(TileCoord, FaceResolution, Seed);
     return 0.0f;
 }
 

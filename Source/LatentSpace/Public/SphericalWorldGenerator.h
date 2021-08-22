@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "Tile/TileSphere.h"
 #include "VoxelGenerators/VoxelGeneratorHelpers.h"
+#include "MachineLearningRemoteComponent.h"
 #include "SphericalWorldGenerator.generated.h"
-
 
 /**
  *
@@ -43,5 +43,5 @@ public:
 	//~ End FVoxelGeneratorInstance Interface
 
 private:
-	FTileSphere Sphere;
+	FTileSphere TileSphere;
 };

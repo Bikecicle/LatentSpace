@@ -13,7 +13,7 @@
 class LATENTSPACE_API FTerraGANTile
 {
 public:
-	FTerraGANTile();
+	FTerraGANTile(UMachineLearningRemoteComponent* pMachineLearningRemoteComponent);
 
 	static const int LatentSize = 128;
 	static const int TileResolution = 256;
@@ -21,5 +21,7 @@ public:
 	float Terrain[TileResolution][TileResolution];
 	bool bIsGenerated;
 
-	float GetValueAt(FTileCoord TileCoord, int FaceResolution, unsigned int SphereSeed, UMachineLearningRemoteComponent* MLComponent);
+	UMachineLearningRemoteComponent* MachineLearningRemoteComponent;
+
+	float GetValueAt(FTileCoord TileCoord, int FaceResolution, unsigned int SphereSeed);
 };

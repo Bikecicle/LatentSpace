@@ -4,27 +4,33 @@
 #include "SphericalWorldGenerator.h"
 #include "FastNoise/VoxelFastNoise.inl"
 #include "VoxelMaterialBuilder.h"
+#include "VoxelWorld.h"
 
 TVoxelSharedRef<FVoxelGeneratorInstance> USphericalWorldGenerator::GetInstance()
 {
 	return MakeVoxelShared<FSphericalWorldGeneratorInstance>(*this);
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////s///
 
 FSphericalWorldGeneratorInstance::FSphericalWorldGeneratorInstance(const USphericalWorldGenerator& MyGenerator)
 	: Super(&MyGenerator),
-	Sphere(FVector(0, 0, 0), 1000.0, 10)
+	TileSphere(FVector(0, 0, 0), 1000.0, 10)
 {
 }
 
 void FSphericalWorldGeneratorInstance::Init(const FVoxelGeneratorInit& InitStruct)
 {
+	if (InitStruct.World != nullptr)
+	{
+		UMachineLearningRemoteComponent* MachineLearningRemoteComponent = InitStruct.World->FindComponentByClass<UMachineLearningRemoteComponent>();
+		TileSphere.Init(MachineLearningRemoteComponent);
+	}
 }
 
 v_flt FSphericalWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack& Items) const
 {
-	return Sphere.GetSignedDistance(FVector4(X, Y, Z, 1.0));
+	return TileSphere.GetSignedDistance(FVector4(X, Y, Z, 1.0));
 }
 
 FVoxelMaterial FSphericalWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack& Items) const
@@ -33,7 +39,7 @@ FVoxelMaterial FSphericalWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt 
 
 	// RGB
 	Builder.SetMaterialConfig(EVoxelMaterialConfig::RGB);
-	Builder.SetColor(Sphere.ColorCode(FVector4(X, Y, Z, 1.0)));
+	Builder.SetColor(TileSphere.ColorCode(FVector4(X, Y, Z, 1.0)));
 
 	// Single index
 	//Builder.SetMaterialConfig(EVoxelMaterialConfig::SingleIndex);

@@ -26,12 +26,10 @@ private:
 
 	FTerraGANTile* Tiles[SideCount][FaceResolution][FaceResolution];
 
-	UMachineLearningRemoteComponent* MachineLearningRemoteComponent;
-
 public:
 	FTileSphere(FVector pCenter, float pRadius, unsigned int pSeed);
 
-	void Initiallize();
+	void Init(UMachineLearningRemoteComponent* MachineLearningRemoteComponent);
 
 	FTileCoord GetTileCoords(FVector Position) const;
 	float GetValueAt(FTileCoord TileCoord) const;
