@@ -7,9 +7,12 @@ FTileCoord::FTileCoord()
 {
 }
 
-FTileCoord FTileCoord::Step(int StepX, int StepY, int FaceResolution)
+FTileCoord FTileCoord::Step(int StepX, int StepY)
 {
     FTileCoord NewTileCoord;
+    NewTileCoord.FaceResolution = FaceResolution;
+    NewTileCoord.TileResolution = TileResolution;
+
     int Rotation;
 
     bool bIsHorizontalEdge;
@@ -218,20 +221,20 @@ FTileCoord FTileCoord::Step(int StepX, int StepY, int FaceResolution)
         {
             // Rotate 90 degrees
             case 1:
-                NewTileCoord.TileX = FaceResolution - TempY;
+                NewTileCoord.TileX = TileResolution - TempY;
                 NewTileCoord.TileY = TempX;
                 break;
 
             // Rotate 180 degrees
             case 2:
-                NewTileCoord.TileX = FaceResolution - TempX;
-                NewTileCoord.TileY = FaceResolution - TempY;
+                NewTileCoord.TileX = TileResolution - TempX;
+                NewTileCoord.TileY = TileResolution - TempY;
                 break;
 
             // Rotate 270 degrees
             case 3:
                 NewTileCoord.TileX = TempY;
-                NewTileCoord.TileY = FaceResolution - TempX;
+                NewTileCoord.TileY = TileResolution - TempX;
                 break;
 
             default:

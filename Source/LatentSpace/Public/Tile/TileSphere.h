@@ -21,13 +21,15 @@ private:
 	FVector Center;
 	/** Radius of the sphere in voxels */
 	float Radius;
+	/** Multiplier for terrain adjustments */
+	float ElevationAmplitude;
 	/** Seed to be passed to any contained noise generators */
 	unsigned int Seed;
 
 	FTerraGANTile* Tiles[SideCount][FaceResolution][FaceResolution];
 
 public:
-	FTileSphere(FVector pCenter, float pRadius, unsigned int pSeed);
+	FTileSphere(FVector pCenter, float pRadius, float pElevationAmplitude, unsigned int pSeed);
 
 	void Init(UMachineLearningRemoteComponent* MachineLearningRemoteComponent);
 

@@ -7,10 +7,11 @@
 #include "FastNoise/VoxelFastNoise.inl"
 
 
-FTileSphere::FTileSphere(FVector pCenter, float pRadius, unsigned int pSeed)
+FTileSphere::FTileSphere(FVector pCenter, float pRadius, float pElevationAmplitude, unsigned int pSeed)
 {
 	Center = pCenter;
 	Radius = pRadius;
+    ElevationAmplitude = pElevationAmplitude;
     Seed = pSeed;    
 }
 
@@ -32,6 +33,9 @@ FTileCoord FTileSphere::GetTileCoords(FVector Position) const
 {
     FVector SpherePosition = Position.GetSafeNormal();
     FTileCoord TileCoord;
+
+    TileCoord.FaceResolution = FaceResolution;
+    TileCoord.TileResolution = FTerraGANTile::TileResolution;
 
     double X, Y, Z;
     X = SpherePosition.X;
@@ -181,11 +185,11 @@ FTileCoord FTileSphere::GetTileCoords(FVector Position) const
     FaceXScale = (FaceXScale + 1.0) / 2.0;
     FaceYScale = (FaceYScale + 1.0) / 2.0;
 
-    TileCoord.FaceX = (int) FMath::RoundToZero(FaceXScale * FaceResolution);
-    TileCoord.FaceY = (int) FMath::RoundToZero(FaceYScale * FaceResolution);
+    TileCoord.FaceX = (int) FMath::RoundToZero(FaceXScale * TileCoord.FaceResolution);
+    TileCoord.FaceY = (int) FMath::RoundToZero(FaceYScale * TileCoord.FaceResolution);
 
-    TileCoord.TileX = (int) FMath::RoundToZero((TileCoord.FaceX * FaceResolution - FaceXScale) * FTerraGANTile::TileResolution);
-    TileCoord.TileY = (int) FMath::RoundToZero((TileCoord.FaceY * FaceResolution - FaceYScale) * FTerraGANTile::TileResolution);
+    TileCoord.TileX = (int) FMath::RoundToZero((FaceXScale * TileCoord.FaceResolution - TileCoord.FaceX) * TileCoord.TileResolution);
+    TileCoord.TileY = (int) FMath::RoundToZero((FaceYScale * TileCoord.FaceResolution - TileCoord.FaceY) * TileCoord.TileResolution);
 
     return TileCoord;
 }
@@ -193,8 +197,7 @@ FTileCoord FTileSphere::GetTileCoords(FVector Position) const
 float FTileSphere::GetValueAt(FTileCoord TileCoord) const
 {
     FTerraGANTile* Tile = Tiles[TileCoord.Face][TileCoord.FaceX][TileCoord.FaceY];
-    Tile->GetValueAt(TileCoord, FaceResolution, Seed);
-    return 0.0f;
+    return Tile->GetValueAt(TileCoord, Seed);
 }
 
 
@@ -204,8 +207,8 @@ float FTileSphere::GetSignedDistance(FVector4 Position) const
     Position3D -= Center;
     float Distance = Position3D.Size() - Radius;
 
-    FTileCoord TileCoord = GetTileCoords(Position3D);
-    Distance += GetValueAt(TileCoord);
+    //FTileCoord TileCoord = GetTileCoords(Position3D);
+    //Distance += GetValueAt(TileCoord) * ElevationAmplitude;
 
     return Distance;
 }
@@ -214,20 +217,20 @@ FColor FTileSphere::ColorCode(FVector4 Position) const
 {
 	FVector Position3D = FVector(Position);
     Position3D -= Center;
-    Position3D = Position3D.GetSafeNormal();
     
+    FTileCoord TileCoord = GetTileCoords(Position3D);
+    float Offset = GetValueAt(TileCoord);
+    float Middle = 0.5;
 
-    
     FLinearColor Color = FLinearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    
-    FVoxelFastNoise FastNoise;
-    FastNoise.SetSeed(2);
-    float Offset = FastNoise.GetPerlin_3D(Position3D.X, Position3D.Y, Position3D.Z, 2.0f) / 2.0f;
-
-    Color.R += Offset;
-    Color.G += Offset;
-    Color.B += Offset;
-    
+    if (Offset < Middle)
+    {
+        Color.R = 1.0;
+        Color.G = Offset / Middle;
+    } else {
+        Color.R = 1.0 - (Offset - Middle) / (1.0 - Middle);
+        Color.G = 1.0;
+    }
 
     return Color.ToFColor(false);
 }

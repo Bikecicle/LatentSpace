@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "SphericalWorldGenerator.h"
 #include "FastNoise/VoxelFastNoise.inl"
 #include "VoxelMaterialBuilder.h"
@@ -13,27 +12,27 @@ TVoxelSharedRef<FVoxelGeneratorInstance> USphericalWorldGenerator::GetInstance()
 
 ////////////////////////////////////////////////////////////////////////////s///
 
-FSphericalWorldGeneratorInstance::FSphericalWorldGeneratorInstance(const USphericalWorldGenerator& MyGenerator)
-	: Super(&MyGenerator),
-	TileSphere(FVector(0, 0, 0), 1000.0, 10)
+FSphericalWorldGeneratorInstance::FSphericalWorldGeneratorInstance(const USphericalWorldGenerator &MyGenerator)
+	: Super(&MyGenerator)
+	, TileSphere(MyGenerator.Center, MyGenerator.Radius, MyGenerator.ElevationAmplitude, MyGenerator.Seed)
 {
 }
 
-void FSphericalWorldGeneratorInstance::Init(const FVoxelGeneratorInit& InitStruct)
+void FSphericalWorldGeneratorInstance::Init(const FVoxelGeneratorInit &InitStruct)
 {
 	if (InitStruct.World != nullptr)
 	{
-		UMachineLearningRemoteComponent* MachineLearningRemoteComponent = InitStruct.World->FindComponentByClass<UMachineLearningRemoteComponent>();
+		UMachineLearningRemoteComponent *MachineLearningRemoteComponent = InitStruct.World->FindComponentByClass<UMachineLearningRemoteComponent>();
 		TileSphere.Init(MachineLearningRemoteComponent);
 	}
 }
 
-v_flt FSphericalWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack& Items) const
+v_flt FSphericalWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack &Items) const
 {
 	return TileSphere.GetSignedDistance(FVector4(X, Y, Z, 1.0));
 }
 
-FVoxelMaterial FSphericalWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack& Items) const
+FVoxelMaterial FSphericalWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack &Items) const
 {
 	FVoxelMaterialBuilder Builder;
 
@@ -43,7 +42,7 @@ FVoxelMaterial FSphericalWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt 
 
 	// Single index
 	//Builder.SetMaterialConfig(EVoxelMaterialConfig::SingleIndex);
-	//Builder.SetSingleIndex(0); 
+	//Builder.SetSingleIndex(0);
 
 	// Multi index
 	//Builder.SetMaterialConfig(EVoxelMaterialConfig::MultiIndex);
@@ -53,7 +52,7 @@ FVoxelMaterial FSphericalWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt 
 	return Builder.Build();
 }
 
-TVoxelRange<v_flt> FSphericalWorldGeneratorInstance::GetValueRangeImpl(const FVoxelIntBox& Bounds, int32 LOD, const FVoxelItemStack& Items) const
+TVoxelRange<v_flt> FSphericalWorldGeneratorInstance::GetValueRangeImpl(const FVoxelIntBox &Bounds, int32 LOD, const FVoxelItemStack &Items) const
 {
 	// Return the values that GetValueImpl can return in Bounds
 	// Used to skip chunks where the value does not change

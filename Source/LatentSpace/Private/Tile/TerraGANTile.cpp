@@ -8,18 +8,17 @@ FTerraGANTile::FTerraGANTile(UMachineLearningRemoteComponent *pMachineLearningRe
 {
 	for (int i = 0; i < TileResolution; i++) {
 		for (int j = 0; j < TileResolution; j++) {
-			Terrain[i][j] = MakeShared<float, ESPMode::ThreadSafe>(0.0f);
+			Terrain[i][j] = 0.0f;
 		}
 	}
 }
 
-float FTerraGANTile::GetValueAt(FTileCoord TileCoord, int FaceResolution, unsigned int SphereSeed)
+float FTerraGANTile::GetValueAt(FTileCoord TileCoord, unsigned int SphereSeed)
 {
 	if (!bIsGenerated)
 	{
 		// Server is ready to generate tile
-
-		if (MachineLearningRemoteComponent != nullptr && MachineLearningRemoteComponent->bScriptRunning)
+		if (MachineLearningRemoteComponent != nullptr && MachineLearningRemoteComponent->bIsConnectedToBackend)
 		{
 			float Latents[3][3][LatentSize];
 			int TileIDs[3][3];
@@ -37,7 +36,7 @@ float FTerraGANTile::GetValueAt(FTileCoord TileCoord, int FaceResolution, unsign
 					// We are looking at a neighboring tile
 					if (StepX != 0 || StepY != 0)
 					{
-						Neighbor = TileCoord.Step(StepX, StepY, FaceResolution);
+						Neighbor = TileCoord.Step(StepX, StepY);
 
 						// Neighboring tile is valid
 						if (Neighbor.Face != FTileCoord::EFace::None)
@@ -91,23 +90,38 @@ float FTerraGANTile::GetValueAt(FTileCoord TileCoord, int FaceResolution, unsign
 			// Send data to server and handle response
 			FEvent* ReceiveTileEvent = FGenericPlatformProcess::GetSynchEventFromPool(false);
 			MachineLearningRemoteComponent->SendStringInput(
-				InputString, [ReceiveTileEvent](const FString &ResultData)
+				InputString, [ReceiveTileEvent, this](const FString &ResultData)
 				{
 					TSharedPtr<FJsonObject> JsonObject = USIOJConvert::ToJsonObject(ResultData);
-					TArray<TSharedPtr<FJsonValue>> TileIDArray = JsonObject->GetArrayField("tile_out");
+					TArray<TSharedPtr<FJsonValue>> TileOut = JsonObject->GetArrayField("tile_out");
+
+					for (int i = 0; i < TileResolution; i++)
+					{
+						for (int j = 0; j < TileResolution; j++)
+						{
+							Terrain[i][j] = TileOut[i * TileResolution + j]->AsNumber();
+						}
+					}
 					
 					UE_LOG(LogTemp, Log, TEXT("Generated tile"));
 
 					ReceiveTileEvent->Trigger();
 				},
 				FunctionName);
+
+			UE_LOG(LogTemp, Log, TEXT("Tile waiting for generation %d %d %d"), TileCoord.Face, TileCoord.FaceX, TileCoord.FaceY);
 			ReceiveTileEvent->Wait();
 			FGenericPlatformProcess::ReturnSynchEventToPool(ReceiveTileEvent);
 
 			// Flag tile as generated
 			bIsGenerated = true;
-			UE_LOG(LogTemp, Log, TEXT("Tile flagged for generation %d %d %d"), TileCoord.Face, TileCoord.FaceX, TileCoord.FaceY);
 		}
 	}
-	return 0.0f;
+	
+	if (TileCoord.TileX >= TileResolution || TileCoord.TileY >= TileResolution || TileCoord.TileX < 0.0 || TileCoord.TileY < 0.0)
+	{
+		return 0.0f;
+	}
+
+	return Terrain[TileCoord.TileX][TileCoord.TileY];
 }

@@ -18,6 +18,18 @@ class USphericalWorldGenerator : public UVoxelGenerator
 
 public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generator")
+	FVector Center = FVector(0, 0, 0);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generator")
+	float Radius = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generator")
+	float ElevationAmplitude = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generator")
+	int Seed = 0;
+
 	//~ Begin UVoxelGenerator Interface
 	virtual TVoxelSharedRef<FVoxelGeneratorInstance> GetInstance() override;
 	//~ End UVoxelGenerator Interface

@@ -18,10 +18,11 @@ public:
 	static const int LatentSize = 128;
 	static const int TileResolution = 256;
 
-	TSharedPtr<float, ESPMode::ThreadSafe> Terrain[TileResolution][TileResolution];
+	float Terrain[TileResolution][TileResolution];
+	
 	bool bIsGenerated;
 
 	UMachineLearningRemoteComponent* MachineLearningRemoteComponent;
 
-	float GetValueAt(FTileCoord TileCoord, int FaceResolution, unsigned int SphereSeed);
+	float GetValueAt(FTileCoord TileCoord, unsigned int SphereSeed);
 };
