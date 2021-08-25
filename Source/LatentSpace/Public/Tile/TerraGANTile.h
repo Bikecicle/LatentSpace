@@ -18,7 +18,7 @@ public:
 	static const int LatentSize = 128;
 	static const int TileResolution = 256;
 
-	float Terrain[TileResolution][TileResolution];
+	TSharedPtr<float, ESPMode::ThreadSafe> Terrain[TileResolution][TileResolution];
 	bool bIsGenerated;
 
 	UMachineLearningRemoteComponent* MachineLearningRemoteComponent;
