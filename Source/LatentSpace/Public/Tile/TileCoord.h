@@ -24,6 +24,8 @@ public:
 	/** The Y position within the tile */
 	int TileY;
 
+	int Rotation;
+
 	int FaceResolution;
 	int TileResolution;
 
@@ -31,7 +33,6 @@ public:
 	 * Get the tile relative to this tile given an X and Y displacement and considering passage between faces.
 	 * @param StepX - Distance to move in the X direction with respect to this tile's orientation (-FaceResolution, FaceResolution)
 	 * @param StepY - Distance to move in the Y direction with respect to this tile's orientation (-FaceResolution, FaceResolution)
-	 * @param FaceResolution - The width of the cube faces measured in number of tiles
 	 * @return The new tile
 	 */
 	FTileCoord Step(int StepX, int StepY);

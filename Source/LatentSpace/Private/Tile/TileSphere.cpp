@@ -219,18 +219,24 @@ FColor FTileSphere::ColorCode(FVector4 Position) const
     Position3D -= Center;
     
     FTileCoord TileCoord = GetTileCoords(Position3D);
-    float Offset = GetValueAt(TileCoord);
-    float Middle = 0.5;
-
     FLinearColor Color = FLinearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    if (Offset < Middle)
+
+    //Color.R = (float) TileCoord.TileX / TileCoord.TileResolution;
+    //Color.B = (float) TileCoord.TileY / TileCoord.TileResolution;
+
+    float Offset = GetValueAt(TileCoord);
+    Offset -= 0.125f;
+    Offset *= 10.0f;
+
+    if (Offset < 0)
     {
         Color.R = 1.0;
-        Color.G = Offset / Middle;
+        Color.G = 1.0 + Offset;
     } else {
-        Color.R = 1.0 - (Offset - Middle) / (1.0 - Middle);
+        Color.R = 1.0 - Offset;
         Color.G = 1.0;
     }
+    
 
     return Color.ToFColor(false);
 }

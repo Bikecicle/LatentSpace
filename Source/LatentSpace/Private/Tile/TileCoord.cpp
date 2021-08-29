@@ -13,8 +13,6 @@ FTileCoord FTileCoord::Step(int StepX, int StepY)
     NewTileCoord.FaceResolution = FaceResolution;
     NewTileCoord.TileResolution = TileResolution;
 
-    int Rotation;
-
     bool bIsHorizontalEdge;
     bool bIsVerticalEdge;
     
@@ -28,32 +26,32 @@ FTileCoord FTileCoord::Step(int StepX, int StepY)
         {
             case FTileCoord::EFace::Front:
                 NewTileCoord.Face = FTileCoord::EFace::Right;
-                Rotation = 0;
+                NewTileCoord.Rotation = 0;
                 break;
 
             case FTileCoord::EFace::Back:
                 NewTileCoord.Face = FTileCoord::EFace::Left;
-                Rotation = 0;
+                NewTileCoord.Rotation = 0;
                 break;
 
             case FTileCoord::EFace::Left:
                 NewTileCoord.Face = FTileCoord::EFace::Front;
-                Rotation = 0;
+                NewTileCoord.Rotation = 0;
                 break;
 
             case FTileCoord::EFace::Right:
                 NewTileCoord.Face = FTileCoord::EFace::Back;
-                Rotation = 0;
+                NewTileCoord.Rotation = 0;
                 break;
 
             case FTileCoord::EFace::Top:
                 NewTileCoord.Face = FTileCoord::EFace::Right;
-                Rotation = 1;
+                NewTileCoord.Rotation = 1;
                 break;
 
             case FTileCoord::EFace::Bottom:
                 NewTileCoord.Face = FTileCoord::EFace::Right;
-                Rotation = 3;
+                NewTileCoord.Rotation = 3;
                 break;
             
             default:
@@ -70,32 +68,32 @@ FTileCoord FTileCoord::Step(int StepX, int StepY)
         {
             case FTileCoord::EFace::Front:
                 NewTileCoord.Face = FTileCoord::EFace::Left;
-                Rotation = 0;
+                NewTileCoord.Rotation = 0;
                 break;
 
             case FTileCoord::EFace::Back:
                 NewTileCoord.Face = FTileCoord::EFace::Right;
-                Rotation = 0;
+                NewTileCoord.Rotation = 0;
                 break;
 
             case FTileCoord::EFace::Left:
                 NewTileCoord.Face = FTileCoord::EFace::Back;
-                Rotation = 0;
+                NewTileCoord.Rotation = 0;
                 break;
 
             case FTileCoord::EFace::Right:
                 NewTileCoord.Face = FTileCoord::EFace::Front;
-                Rotation = 0;
+                NewTileCoord.Rotation = 0;
                 break;
 
             case FTileCoord::EFace::Top:
                 NewTileCoord.Face = FTileCoord::EFace::Left;
-                Rotation = 3;
+                NewTileCoord.Rotation = 3;
                 break;
 
             case FTileCoord::EFace::Bottom:
                 NewTileCoord.Face = FTileCoord::EFace::Left;
-                Rotation = 1;
+                NewTileCoord.Rotation = 1;
                 break;
             
             default:
@@ -106,45 +104,45 @@ FTileCoord FTileCoord::Step(int StepX, int StepY)
     else
     {
         bIsHorizontalEdge = false;
-        NewTileCoord.TileX = TileX + StepX;
+        NewTileCoord.FaceX = FaceX + StepX;
     }
 
     // Stepping over north edge
     if (FaceY + StepY >= FaceResolution)
     {
         bIsVerticalEdge = true;
-        NewTileCoord.TileY = TileY + StepY - FaceResolution;
+        NewTileCoord.FaceY = FaceY + StepY - FaceResolution;
 
         switch (Face)
         {
             case FTileCoord::EFace::Front:
                 NewTileCoord.Face = FTileCoord::EFace::Top;
-                Rotation = 0;
+                NewTileCoord.Rotation = 0;
                 break;
 
             case FTileCoord::EFace::Back:
                 NewTileCoord.Face = FTileCoord::EFace::Top;
-                Rotation = 2;
+                NewTileCoord.Rotation = 2;
                 break;
 
             case FTileCoord::EFace::Left:
                 NewTileCoord.Face = FTileCoord::EFace::Top;
-                Rotation = 1;
+                NewTileCoord.Rotation = 1;
                 break;
 
             case FTileCoord::EFace::Right:
                 NewTileCoord.Face = FTileCoord::EFace::Top;
-                Rotation = 3;
+                NewTileCoord.Rotation = 3;
                 break;
 
             case FTileCoord::EFace::Top:
                 NewTileCoord.Face = FTileCoord::EFace::Back;
-                Rotation = 2;
+                NewTileCoord.Rotation = 2;
                 break;
 
             case FTileCoord::EFace::Bottom:
                 NewTileCoord.Face = FTileCoord::EFace::Front;
-                Rotation = 0;
+                NewTileCoord.Rotation = 0;
                 break;
             
             default:
@@ -161,32 +159,32 @@ FTileCoord FTileCoord::Step(int StepX, int StepY)
         {
             case FTileCoord::EFace::Front:
                 NewTileCoord.Face = FTileCoord::EFace::Bottom;
-                Rotation = 0;
+                NewTileCoord.Rotation = 0;
                 break;
 
             case FTileCoord::EFace::Back:
                 NewTileCoord.Face = FTileCoord::EFace::Bottom;
-                Rotation = 2;
+                NewTileCoord.Rotation = 2;
                 break;
 
             case FTileCoord::EFace::Left:
                 NewTileCoord.Face = FTileCoord::EFace::Bottom;
-                Rotation = 1;
+                NewTileCoord.Rotation = 1;
                 break;
 
             case FTileCoord::EFace::Right:
                 NewTileCoord.Face = FTileCoord::EFace::Bottom;
-                Rotation = 3;
+                NewTileCoord.Rotation = 3;
                 break;
 
             case FTileCoord::EFace::Top:
                 NewTileCoord.Face = FTileCoord::EFace::Front;
-                Rotation = 0;
+                NewTileCoord.Rotation = 0;
                 break;
 
             case FTileCoord::EFace::Bottom:
                 NewTileCoord.Face = FTileCoord::EFace::Back;
-                Rotation = 2;
+                NewTileCoord.Rotation = 2;
                 break;
             
             default:
@@ -209,35 +207,41 @@ FTileCoord FTileCoord::Step(int StepX, int StepY)
     else if (!bIsHorizontalEdge && !bIsVerticalEdge)
     {
         NewTileCoord.Face = Face;
+        NewTileCoord.Rotation = 0;
     }
     // Stepping over a single edge
     else
     {
-        int TempX = NewTileCoord.TileX;
-        int TempY = NewTileCoord.TileY;
+        int TempFaceX = NewTileCoord.FaceX;
+        int TempFaceY = NewTileCoord.FaceY;
+        int TempTileX = NewTileCoord.TileX;
+        int TempTileY = NewTileCoord.TileY;
 
-        // Perform counter-clockwise rotation of tile coordinates
+        // Perform counter-clockwise rotation of coordinates
         switch (Rotation)
         {
             // Rotate 90 degrees
             case 1:
-                NewTileCoord.TileX = TileResolution - TempY;
-                NewTileCoord.TileY = TempX;
+                NewTileCoord.FaceX = FaceResolution - TempFaceY;
+                NewTileCoord.FaceY = TempFaceX;
+                NewTileCoord.TileX = FaceResolution - TempTileY;
+                NewTileCoord.TileY = TempTileX;
                 break;
 
             // Rotate 180 degrees
             case 2:
-                NewTileCoord.TileX = TileResolution - TempX;
-                NewTileCoord.TileY = TileResolution - TempY;
+                NewTileCoord.FaceX = FaceResolution - TempFaceX;
+                NewTileCoord.FaceY = FaceResolution - TempFaceY;
+                NewTileCoord.TileX = TileResolution - TempTileX;
+                NewTileCoord.TileY = TileResolution - TempTileY;
                 break;
 
             // Rotate 270 degrees
             case 3:
-                NewTileCoord.TileX = TempY;
-                NewTileCoord.TileY = TileResolution - TempX;
-                break;
-
-            default:
+                NewTileCoord.FaceX = TempFaceY;
+                NewTileCoord.FaceY = FaceResolution - TempFaceX;
+                NewTileCoord.TileX = TempTileY;
+                NewTileCoord.TileY = TileResolution - TempTileX;
                 break;
         }
     }

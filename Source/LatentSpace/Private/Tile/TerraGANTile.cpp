@@ -22,6 +22,7 @@ float FTerraGANTile::GetValueAt(FTileCoord TileCoord, unsigned int SphereSeed)
 		{
 			float Latents[3][3][LatentSize];
 			int TileIDs[3][3];
+			FTileCoord TileCoords[3][3];
 
 			FTileCoord Neighbor;
 			int TileSeed;
@@ -48,11 +49,13 @@ float FTerraGANTile::GetValueAt(FTileCoord TileCoord, unsigned int SphereSeed)
 						{
 							TileSeed = -1;
 						}
+						TileCoords[i][j] = Neighbor;
 					}
 					// We are looking at the center tile
 					else
 					{
 						TileSeed = FNoiseManager::GetValueNoise3D(TileCoord.Face, TileCoord.FaceX, TileCoord.FaceY, SphereSeed) / 2;
+						TileCoords[i][j] = TileCoord;
 					}
 
 					FNoiseManager::GenerateLatent(Latents[i][j], LatentSize, TileSeed);
@@ -62,26 +65,33 @@ float FTerraGANTile::GetValueAt(FTileCoord TileCoord, unsigned int SphereSeed)
 
 			// Prepare data for sending to server
 			TArray<TSharedPtr<FJsonValue>> TileIDArray;
-			for (int i = 0; i < 3; i++)
-			{
-				for (int j = 0; j < 3; j++)
-				{
-					TileIDArray.Add(MakeShareable(new FJsonValueNumber(TileIDs[i][j])));
-				}
-			}
+			TArray<TSharedPtr<FJsonValue>> FaceArray;
+			TArray<TSharedPtr<FJsonValue>> FaceXArray;
+			TArray<TSharedPtr<FJsonValue>> FaceYArray;
+			TArray<TSharedPtr<FJsonValue>> RotationArray;
 			TArray<TSharedPtr<FJsonValue>> LatentArray;
 			for (int i = 0; i < 3; i++)
 			{
 				for (int j = 0; j < 3; j++)
 				{
+					TileIDArray.Add(MakeShareable(new FJsonValueNumber(TileIDs[j][i])));
+					FaceArray.Add(MakeShareable(new FJsonValueNumber(TileCoords[j][i].Face)));
+					FaceXArray.Add(MakeShareable(new FJsonValueNumber(TileCoords[j][i].FaceX)));
+					FaceYArray.Add(MakeShareable(new FJsonValueNumber(TileCoords[j][i].FaceY)));
+					RotationArray.Add(MakeShareable(new FJsonValueNumber(TileCoords[j][i].Rotation)));
 					for (int k = 0; k < LatentSize; k++)
 					{
-						LatentArray.Add(MakeShareable(new FJsonValueNumber(Latents[i][j][k])));
+						LatentArray.Add(MakeShareable(new FJsonValueNumber(Latents[j][i][k])));
 					}
+					UE_LOG(LogTemp, Log, TEXT("Gathered adjecent tile %d, %d %d, %d"), TileCoords[j][i].Face, TileCoords[j][i].FaceX, TileCoords[j][i].FaceY, TileCoords[j][i].Rotation);
 				}
 			}
 			TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 			JsonObject->SetArrayField(TEXT("tile_ids"), TileIDArray);
+			JsonObject->SetArrayField(TEXT("faces"), FaceArray);
+			JsonObject->SetArrayField(TEXT("x"), FaceXArray);
+			JsonObject->SetArrayField(TEXT("y"), FaceYArray);
+			JsonObject->SetArrayField(TEXT("rotations"), RotationArray);
 			JsonObject->SetArrayField(TEXT("latents"), LatentArray);
 			FString InputString = USIOJConvert::ToJsonString(JsonObject);
 
@@ -99,7 +109,8 @@ float FTerraGANTile::GetValueAt(FTileCoord TileCoord, unsigned int SphereSeed)
 					{
 						for (int j = 0; j < TileResolution; j++)
 						{
-							Terrain[i][j] = TileOut[i * TileResolution + j]->AsNumber();
+							// Tile out goes left to right, top to bottom so do awkward 90 degree rotation
+							Terrain[i][j] = TileOut[i + (TileResolution - j - 1) * TileResolution]->AsNumber();
 						}
 					}
 					
