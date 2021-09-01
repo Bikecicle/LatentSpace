@@ -4,6 +4,12 @@
 #include "Tile/TileCoord.h"
 
 FTileCoord::FTileCoord()
+    : Face(EFace::None)
+    , FaceX(0)
+    , FaceY(0)
+    , TileX(0)
+    , TileY(0)
+    , Rotation(0)
 {
 }
 

@@ -15,7 +15,7 @@ FTileSphere::FTileSphere(FVector pCenter, float pRadius, float pElevationAmplitu
     Seed = pSeed;    
 }
 
-void FTileSphere::Init(UMachineLearningRemoteComponent* MachineLearningRemoteComponent)
+void FTileSphere::Init(UMachineLearningRemoteComponent* MachineLearningRemoteComponent, bool bPreGenerate)
 {
     for (int i = 0; i < SideCount; i++)
     {
@@ -24,9 +24,20 @@ void FTileSphere::Init(UMachineLearningRemoteComponent* MachineLearningRemoteCom
             for (int k = 0; k < FaceResolution; k++)
             {
                 Tiles[i][j][k] = new FTerraGANTile(MachineLearningRemoteComponent);
+                if (bPreGenerate)
+                {
+                    FTileCoord TileCoord;
+                    TileCoord.FaceResolution = FaceResolution;
+                    TileCoord.TileResolution = FTerraGANTile::TileResolution;
+                    TileCoord.Face = static_cast<FTileCoord::EFace>(i);
+                    TileCoord.FaceX = j;
+                    TileCoord.FaceY = k;
+                    Tiles[i][j][k]->Generate(TileCoord, Seed);
+                }
             }
         }
     }
+    UE_LOG(LogTemp, Log, TEXT("Initialization complete"));
 }
 
 FTileCoord FTileSphere::GetTileCoords(FVector Position) const
@@ -191,6 +202,8 @@ FTileCoord FTileSphere::GetTileCoords(FVector Position) const
     TileCoord.TileX = (int) FMath::RoundToZero((FaceXScale * TileCoord.FaceResolution - TileCoord.FaceX) * TileCoord.TileResolution);
     TileCoord.TileY = (int) FMath::RoundToZero((FaceYScale * TileCoord.FaceResolution - TileCoord.FaceY) * TileCoord.TileResolution);
 
+    TileCoord.Rotation = 0;
+
     return TileCoord;
 }
 
@@ -207,8 +220,8 @@ float FTileSphere::GetSignedDistance(FVector4 Position) const
     Position3D -= Center;
     float Distance = Position3D.Size() - Radius;
 
-    //FTileCoord TileCoord = GetTileCoords(Position3D);
-    //Distance += GetValueAt(TileCoord) * ElevationAmplitude;
+    FTileCoord TileCoord = GetTileCoords(Position3D);
+    Distance -= GetValueAt(TileCoord) * ElevationAmplitude;
 
     return Distance;
 }

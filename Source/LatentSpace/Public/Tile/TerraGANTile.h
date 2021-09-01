@@ -16,7 +16,7 @@ public:
 	FTerraGANTile(UMachineLearningRemoteComponent* pMachineLearningRemoteComponent);
 
 	static const int LatentSize = 128;
-	static const int TileResolution = 256;
+	static const int TileResolution = 128;
 
 	float Terrain[TileResolution][TileResolution];
 	
@@ -24,5 +24,6 @@ public:
 
 	UMachineLearningRemoteComponent* MachineLearningRemoteComponent;
 
+	void Generate(FTileCoord TileCoord, unsigned int SphereSeed);
 	float GetValueAt(FTileCoord TileCoord, unsigned int SphereSeed);
 };

@@ -23,7 +23,7 @@ void FSphericalWorldGeneratorInstance::Init(const FVoxelGeneratorInit &InitStruc
 	if (InitStruct.World != nullptr)
 	{
 		UMachineLearningRemoteComponent *MachineLearningRemoteComponent = InitStruct.World->FindComponentByClass<UMachineLearningRemoteComponent>();
-		TileSphere.Init(MachineLearningRemoteComponent);
+		TileSphere.Init(MachineLearningRemoteComponent, false);
 	}
 }
 

@@ -31,7 +31,7 @@ private:
 public:
 	FTileSphere(FVector pCenter, float pRadius, float pElevationAmplitude, unsigned int pSeed);
 
-	void Init(UMachineLearningRemoteComponent* MachineLearningRemoteComponent);
+	void Init(UMachineLearningRemoteComponent* MachineLearningRemoteComponent, bool bPreGenerate);
 
 	FTileCoord GetTileCoords(FVector Position) const;
 	float GetValueAt(FTileCoord TileCoord) const;

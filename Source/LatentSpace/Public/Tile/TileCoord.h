@@ -23,7 +23,7 @@ public:
 	int TileX;
 	/** The Y position within the tile */
 	int TileY;
-
+	/** Number of 90 degree counter-clockwise rotations to perform on coordinates */
 	int Rotation;
 
 	int FaceResolution;
