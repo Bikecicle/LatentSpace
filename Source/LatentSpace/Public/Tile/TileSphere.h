@@ -12,7 +12,7 @@ class LATENTSPACE_API FTileSphere
 {
 public:
 	/** Width of a cube face in number of tiles */
-	static const int FaceResolution = 4;
+	static const int FaceResolution = 8;
 	/** Number of sides on a cube */
 	static const int SideCount = 6;
 
@@ -31,7 +31,7 @@ private:
 public:
 	FTileSphere(FVector pCenter, float pRadius, float pElevationAmplitude, unsigned int pSeed);
 
-	void Init(UMachineLearningRemoteComponent* MachineLearningRemoteComponent, bool bPreGenerate);
+	void Init(UMachineLearningRemoteComponent* MachineLearningRemoteComponent);
 
 	FTileCoord GetTileCoords(FVector Position) const;
 	float GetValueAt(FTileCoord TileCoord) const;

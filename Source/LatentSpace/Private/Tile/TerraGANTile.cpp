@@ -84,7 +84,7 @@ void FTerraGANTile::Generate(FTileCoord TileCoord, unsigned int SphereSeed)
 				{
 					LatentArray.Add(MakeShareable(new FJsonValueNumber(Latents[j][i][k])));
 				}
-				//UE_LOG(LogTemp, Log, TEXT("Gathered adjecent tile %d %d %d %d: %d"), TileCoords[j][i].Face, TileCoords[j][i].FaceX, TileCoords[j][i].FaceY, TileCoords[j][i].Rotation, TileIDs[j][i]);
+				UE_LOG(LogTemp, Log, TEXT("Gathered adjecent tile %d %d %d %d: %d"), TileCoords[j][i].Face, TileCoords[j][i].FaceX, TileCoords[j][i].FaceY, TileCoords[j][i].Rotation, TileIDs[j][i]);
 			}
 		}
 		TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);

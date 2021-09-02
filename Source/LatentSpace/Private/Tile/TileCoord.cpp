@@ -224,30 +224,30 @@ FTileCoord FTileCoord::Step(int StepX, int StepY)
         int TempTileY = NewTileCoord.TileY;
 
         // Perform counter-clockwise rotation of coordinates
-        switch (Rotation)
+        switch (NewTileCoord.Rotation)
         {
             // Rotate 90 degrees
             case 1:
-                NewTileCoord.FaceX = FaceResolution - TempFaceY;
-                NewTileCoord.FaceY = TempFaceX;
-                NewTileCoord.TileX = FaceResolution - TempTileY;
-                NewTileCoord.TileY = TempTileX;
+                NewTileCoord.FaceX = TempFaceY;
+                NewTileCoord.FaceY = FaceResolution - TempFaceX - 1;
+                NewTileCoord.TileX = TempTileY;
+                NewTileCoord.TileY = TileResolution - TempTileX - 1;
                 break;
 
             // Rotate 180 degrees
             case 2:
-                NewTileCoord.FaceX = FaceResolution - TempFaceX;
-                NewTileCoord.FaceY = FaceResolution - TempFaceY;
-                NewTileCoord.TileX = TileResolution - TempTileX;
-                NewTileCoord.TileY = TileResolution - TempTileY;
+                NewTileCoord.FaceX = FaceResolution - TempFaceX - 1;
+                NewTileCoord.FaceY = FaceResolution - TempFaceY - 1;
+                NewTileCoord.TileX = TileResolution - TempTileX - 1;
+                NewTileCoord.TileY = TileResolution - TempTileY - 1;
                 break;
 
             // Rotate 270 degrees
             case 3:
-                NewTileCoord.FaceX = TempFaceY;
-                NewTileCoord.FaceY = FaceResolution - TempFaceX;
-                NewTileCoord.TileX = TempTileY;
-                NewTileCoord.TileY = TileResolution - TempTileX;
+                NewTileCoord.FaceX = FaceResolution - TempFaceY - 1;
+                NewTileCoord.FaceY = TempFaceX;
+                NewTileCoord.TileX = TileResolution - TempTileY - 1;
+                NewTileCoord.TileY = TempTileX;
                 break;
         }
     }

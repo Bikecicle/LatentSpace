@@ -8,14 +8,14 @@
 
 
 FTileSphere::FTileSphere(FVector pCenter, float pRadius, float pElevationAmplitude, unsigned int pSeed)
-{
-	Center = pCenter;
-	Radius = pRadius;
-    ElevationAmplitude = pElevationAmplitude;
-    Seed = pSeed;    
+    : Center(pCenter)
+    , Radius(pRadius)
+    , ElevationAmplitude(pElevationAmplitude)
+    , Seed(pSeed)
+{ 
 }
 
-void FTileSphere::Init(UMachineLearningRemoteComponent* MachineLearningRemoteComponent, bool bPreGenerate)
+void FTileSphere::Init(UMachineLearningRemoteComponent* MachineLearningRemoteComponent)
 {
     for (int i = 0; i < SideCount; i++)
     {
@@ -24,16 +24,6 @@ void FTileSphere::Init(UMachineLearningRemoteComponent* MachineLearningRemoteCom
             for (int k = 0; k < FaceResolution; k++)
             {
                 Tiles[i][j][k] = new FTerraGANTile(MachineLearningRemoteComponent);
-                if (bPreGenerate)
-                {
-                    FTileCoord TileCoord;
-                    TileCoord.FaceResolution = FaceResolution;
-                    TileCoord.TileResolution = FTerraGANTile::TileResolution;
-                    TileCoord.Face = static_cast<FTileCoord::EFace>(i);
-                    TileCoord.FaceX = j;
-                    TileCoord.FaceY = k;
-                    Tiles[i][j][k]->Generate(TileCoord, Seed);
-                }
             }
         }
     }
