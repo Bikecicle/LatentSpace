@@ -26,15 +26,19 @@ private:
 	/** Seed to be passed to any contained noise generators */
 	unsigned int Seed;
 
+	TArray<float> MaterialIndexPositions;
+
 	FTerraGANTile* Tiles[SideCount][FaceResolution][FaceResolution];
 
 public:
 	FTileSphere(FVector pCenter, float pRadius, float pElevationAmplitude, unsigned int pSeed);
 
 	void Init(UMachineLearningRemoteComponent* MachineLearningRemoteComponent);
+	void SetMaterialIndexPositions(TArray<float> pMaterialIndexPositions);
 
 	FTileCoord GetTileCoords(FVector Position) const;
 	float GetValueAt(FTileCoord TileCoord) const;
 	float GetSignedDistance(FVector4 Position) const;
+	TArray<float> GetMaterialIndexValues(FVector4 Position) const;
 	FColor ColorCode(FVector4 Position) const;
 };

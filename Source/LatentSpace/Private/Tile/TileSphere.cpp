@@ -30,6 +30,11 @@ void FTileSphere::Init(UMachineLearningRemoteComponent* MachineLearningRemoteCom
     UE_LOG(LogTemp, Log, TEXT("Initialization complete"));
 }
 
+void FTileSphere::SetMaterialIndexPositions(TArray<float> pMaterialIndexPositions)
+{
+    MaterialIndexPositions = pMaterialIndexPositions;
+}
+
 FTileCoord FTileSphere::GetTileCoords(FVector Position) const
 {
     FVector SpherePosition = Position.GetSafeNormal();
@@ -214,6 +219,67 @@ float FTileSphere::GetSignedDistance(FVector4 Position) const
     Distance -= GetValueAt(TileCoord) * ElevationAmplitude;
 
     return Distance;
+}
+
+TArray<float> FTileSphere::GetMaterialIndexValues(FVector4 Position) const
+{
+    FVector Position3D = FVector(Position);
+    Position3D -= Center;
+    FTileCoord TileCoord = GetTileCoords(Position3D);
+    float Offset = GetValueAt(TileCoord);
+
+    TArray<float> MaterialIndexValues;
+    int UpperIndex = -1;
+    int LowerIndex = -1;
+    float UpperIndexPosition = INT_MAX;
+    float LowerIndexPosition = INT_MIN;
+
+    for (int i = 0; i < MaterialIndexPositions.Num(); i++)
+    {
+        MaterialIndexValues.Add(0.0f);
+
+        // Index is above or equal to offset
+        if (Offset <= MaterialIndexPositions[i])
+        {
+            // Index is new closest upper index
+            if (MaterialIndexPositions[i] <= UpperIndexPosition)
+            {
+                UpperIndex = i;
+                UpperIndexPosition = MaterialIndexPositions[i];
+            }
+        }
+        // Index is below offset
+        else
+        {
+            // Index is new closest lower index
+            if (MaterialIndexPositions[i] >= LowerIndexPosition)
+            {
+                LowerIndex = i;
+                LowerIndexPosition = MaterialIndexPositions[i];
+            }
+        }
+    }
+
+    // Offset is lower than all index positions
+    if (LowerIndex == -1)
+    {
+        MaterialIndexValues[UpperIndex] = 1.0f;
+    }
+    // Offset is greater than all index positions
+    else if (UpperIndex == -1)
+    {
+        MaterialIndexValues[LowerIndex] = 1.0f;
+    }
+    // Offset is between two indices
+    else
+    {
+        // Interpolate between lower and upper indices
+        float Alpha = (Offset - LowerIndexPosition) / (UpperIndexPosition - LowerIndexPosition);
+        MaterialIndexValues[LowerIndex] = 1.0f - Alpha;
+        MaterialIndexValues[UpperIndex] = Alpha;
+    }
+
+    return MaterialIndexValues;
 }
 
 FColor FTileSphere::ColorCode(FVector4 Position) const

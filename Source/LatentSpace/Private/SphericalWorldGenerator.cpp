@@ -20,11 +20,17 @@ FSphericalWorldGeneratorInstance::FSphericalWorldGeneratorInstance(const USpheri
 
 void FSphericalWorldGeneratorInstance::Init(const FVoxelGeneratorInit &InitStruct)
 {
+	// Assign UMachineLearningComponent to tiles for querying server
 	if (InitStruct.World != nullptr)
 	{
 		UMachineLearningRemoteComponent *MachineLearningRemoteComponent = InitStruct.World->FindComponentByClass<UMachineLearningRemoteComponent>();
 		TileSphere.Init(MachineLearningRemoteComponent);
 	}
+	
+	TArray<float> MaterialIndexPositions;
+	MaterialIndexPositions.Add(0.3f); // Set index 0 position
+	MaterialIndexPositions.Add(0.7f); // Set index 1 position
+	TileSphere.SetMaterialIndexPositions(MaterialIndexPositions);
 }
 
 v_flt FSphericalWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack &Items) const
@@ -37,17 +43,19 @@ FVoxelMaterial FSphericalWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt 
 	FVoxelMaterialBuilder Builder;
 
 	// RGB
-	Builder.SetMaterialConfig(EVoxelMaterialConfig::RGB);
-	Builder.SetColor(TileSphere.ColorCode(FVector4(X, Y, Z, 1.0)));
+	//Builder.SetMaterialConfig(EVoxelMaterialConfig::RGB);
+	//Builder.SetColor(TileSphere.ColorCode(FVector4(X, Y, Z, 1.0)));
 
 	// Single index
 	//Builder.SetMaterialConfig(EVoxelMaterialConfig::SingleIndex);
 	//Builder.SetSingleIndex(0);
 
+	TArray<float> MaterialIndexValues = TileSphere.GetMaterialIndexValues(FVector4(X, Y, Z, 1.0));
+
 	// Multi index
-	//Builder.SetMaterialConfig(EVoxelMaterialConfig::MultiIndex);
-	//Builder.AddMultiIndex(0, 0.5f);
-	//Builder.AddMultiIndex(1, 0.5f);
+	Builder.SetMaterialConfig(EVoxelMaterialConfig::MultiIndex);
+	Builder.AddMultiIndex(0, MaterialIndexValues[0]);
+	Builder.AddMultiIndex(1, MaterialIndexValues[1]);
 
 	return Builder.Build();
 }
