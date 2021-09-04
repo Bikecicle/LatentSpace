@@ -3,8 +3,8 @@
 #include "Tile/TerraGANTile.h"
 #include "GenericPlatform/GenericPlatformProcess.h"
 
-FTerraGANTile::FTerraGANTile(UMachineLearningRemoteComponent *pMachineLearningRemoteComponent)
-	: MachineLearningRemoteComponent(pMachineLearningRemoteComponent)
+FTerraGANTile::FTerraGANTile(UMachineLearningRemoteComponent *TileMachineLearningRemoteComponent)
+	: MachineLearningRemoteComponent(TileMachineLearningRemoteComponent)
 {
 	for (int i = 0; i < TileResolution; i++)
 	{
@@ -125,9 +125,9 @@ void FTerraGANTile::Generate(FTileCoord TileCoord, unsigned int SphereSeed)
 		ReceiveTileEvent->Wait();
 		FGenericPlatformProcess::ReturnSynchEventToPool(ReceiveTileEvent);
 
-		// Flag tile as generated
-		bIsGenerated = true;
 	}
+	// Flag tile as generated
+	bIsGenerated = true;
 }
 
 float FTerraGANTile::GetValueAt(FTileCoord TileCoord, unsigned int SphereSeed)

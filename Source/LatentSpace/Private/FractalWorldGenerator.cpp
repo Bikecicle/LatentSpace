@@ -19,9 +19,7 @@ TVoxelSharedRef<FVoxelGeneratorInstance> UFractalWorldGenerator::GetInstance()
 
 FFractalWorldGeneratorInstance::FFractalWorldGeneratorInstance(const UFractalWorldGenerator& MyGenerator)
 	: Super(&MyGenerator)
-	, Scale(MyGenerator.Scale)
-	, Iterations(MyGenerator.Iterations)
-	, DistanceOffset(MyGenerator.DistanceOffset)
+	, Fractal(MyGenerator.Scale, MyGenerator.DistanceOffset, MyGenerator.Iterations)
 {
 }
 
@@ -35,10 +33,8 @@ void FFractalWorldGeneratorInstance::Init(const FVoxelGeneratorInit& InitStruct)
 
 v_flt FFractalWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack& Items) const
 {
-	X /= Scale;
-	Y /= Scale;
-	Z /= Scale;
-	return Fractal.GetSignedDistance(FVector4(X, Y, Z, 1.0), 12) + (DistanceOffset / Scale);
+
+	return Fractal.GetSignedDistance(FVector(X, Y, Z));
 }
 
 FVoxelMaterial FFractalWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack& Items) const

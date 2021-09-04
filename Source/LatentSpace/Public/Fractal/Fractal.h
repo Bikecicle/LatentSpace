@@ -15,10 +15,15 @@ class LATENTSPACE_API FFractal
 private:
 	TArray<IFold*> Folds;
 	IBaseShape* BaseShape;
+	
+	float Scale;
+	float DistanceOffset;
+	int Iterations;
+
 public:
-	FFractal();
+	FFractal(float pScale, float pDistanceOffset, int pIterations);
 
 	void AddFold(IFold* Fold);
 	void SetBase(IBaseShape* Base);
-	float GetSignedDistance(FVector Origin, int Iterations) const;
+	float GetSignedDistance(FVector Origin) const;
 };

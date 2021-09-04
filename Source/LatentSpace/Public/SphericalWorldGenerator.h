@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Tile/TileSphere.h"
 #include "VoxelGenerators/VoxelGeneratorHelpers.h"
+#include "Utils\NoiseManager.h"
 #include "MachineLearningRemoteComponent.h"
 #include "SphericalWorldGenerator.generated.h"
 
@@ -28,7 +29,7 @@ public:
 	float ElevationAmplitude = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generator")
-	int Seed = 0;
+	int WorldSeed = 0;
 
 	//~ Begin UVoxelGenerator Interface
 	virtual TVoxelSharedRef<FVoxelGeneratorInstance> GetInstance() override;
@@ -56,4 +57,5 @@ public:
 
 private:
 	FTileSphere TileSphere;
+	int WorldSeed;
 };

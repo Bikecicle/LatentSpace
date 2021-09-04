@@ -14,7 +14,8 @@ TVoxelSharedRef<FVoxelGeneratorInstance> USphericalWorldGenerator::GetInstance()
 
 FSphericalWorldGeneratorInstance::FSphericalWorldGeneratorInstance(const USphericalWorldGenerator &MyGenerator)
 	: Super(&MyGenerator)
-	, TileSphere(MyGenerator.Center, MyGenerator.Radius, MyGenerator.ElevationAmplitude, MyGenerator.Seed)
+	, TileSphere(MyGenerator.Center, MyGenerator.Radius, MyGenerator.ElevationAmplitude)
+	, WorldSeed(MyGenerator.WorldSeed)
 {
 }
 
@@ -24,7 +25,7 @@ void FSphericalWorldGeneratorInstance::Init(const FVoxelGeneratorInit &InitStruc
 	if (InitStruct.World != nullptr)
 	{
 		UMachineLearningRemoteComponent *MachineLearningRemoteComponent = InitStruct.World->FindComponentByClass<UMachineLearningRemoteComponent>();
-		TileSphere.Init(MachineLearningRemoteComponent);
+		TileSphere.Init(MachineLearningRemoteComponent, FNoiseManager::GetValueNoise1D(1, WorldSeed));
 	}
 	
 	TArray<float> MaterialIndexPositions;
@@ -35,7 +36,7 @@ void FSphericalWorldGeneratorInstance::Init(const FVoxelGeneratorInit &InitStruc
 
 v_flt FSphericalWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack &Items) const
 {
-	return TileSphere.GetSignedDistance(FVector4(X, Y, Z, 1.0));
+	return TileSphere.GetSignedDistance(FVector(X, Y, Z));
 }
 
 FVoxelMaterial FSphericalWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack &Items) const
@@ -50,7 +51,7 @@ FVoxelMaterial FSphericalWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt 
 	//Builder.SetMaterialConfig(EVoxelMaterialConfig::SingleIndex);
 	//Builder.SetSingleIndex(0);
 
-	TArray<float> MaterialIndexValues = TileSphere.GetMaterialIndexValues(FVector4(X, Y, Z, 1.0));
+	TArray<float> MaterialIndexValues = TileSphere.GetMaterialIndexValues(FVector(X, Y, Z));
 
 	// Multi index
 	Builder.SetMaterialConfig(EVoxelMaterialConfig::MultiIndex);

@@ -7,16 +7,16 @@
 #include "FastNoise/VoxelFastNoise.inl"
 
 
-FTileSphere::FTileSphere(FVector pCenter, float pRadius, float pElevationAmplitude, unsigned int pSeed)
-    : Center(pCenter)
-    , Radius(pRadius)
-    , ElevationAmplitude(pElevationAmplitude)
-    , Seed(pSeed)
+FTileSphere::FTileSphere(FVector SphereCenter, float SphereRadius, float SphereElevationAmplitude)
+    : Center(SphereCenter)
+    , Radius(SphereRadius)
+    , ElevationAmplitude(SphereElevationAmplitude)
 { 
 }
 
-void FTileSphere::Init(UMachineLearningRemoteComponent* MachineLearningRemoteComponent)
+void FTileSphere::Init(UMachineLearningRemoteComponent* MachineLearningRemoteComponent, unsigned int SphereSeed)
 {
+    Seed = SphereSeed;
     for (int i = 0; i < SideCount; i++)
     {
         for (int j = 0; j < FaceResolution; j++)
@@ -30,9 +30,9 @@ void FTileSphere::Init(UMachineLearningRemoteComponent* MachineLearningRemoteCom
     UE_LOG(LogTemp, Log, TEXT("Initialization complete"));
 }
 
-void FTileSphere::SetMaterialIndexPositions(TArray<float> pMaterialIndexPositions)
+void FTileSphere::SetMaterialIndexPositions(TArray<float> SphereMaterialIndexPositions)
 {
-    MaterialIndexPositions = pMaterialIndexPositions;
+    MaterialIndexPositions = SphereMaterialIndexPositions;
 }
 
 FTileCoord FTileSphere::GetTileCoords(FVector Position) const
@@ -204,28 +204,25 @@ FTileCoord FTileSphere::GetTileCoords(FVector Position) const
 
 float FTileSphere::GetValueAt(FTileCoord TileCoord) const
 {
-    FTerraGANTile* Tile = Tiles[TileCoord.Face][TileCoord.FaceX][TileCoord.FaceY];
-    return Tile->GetValueAt(TileCoord, Seed);
+    return Tiles[TileCoord.Face][TileCoord.FaceX][TileCoord.FaceY]->GetValueAt(TileCoord, Seed);
 }
 
 
-float FTileSphere::GetSignedDistance(FVector4 Position) const
+float FTileSphere::GetSignedDistance(FVector Position) const
 {
-    FVector Position3D = FVector(Position);
-    Position3D -= Center;
-    float Distance = Position3D.Size() - Radius;
+    Position -= Center;
+    float Distance = Position.Size() - Radius;
 
-    FTileCoord TileCoord = GetTileCoords(Position3D);
+    FTileCoord TileCoord = GetTileCoords(Position);
     Distance -= GetValueAt(TileCoord) * ElevationAmplitude;
 
     return Distance;
 }
 
-TArray<float> FTileSphere::GetMaterialIndexValues(FVector4 Position) const
+TArray<float> FTileSphere::GetMaterialIndexValues(FVector Position) const
 {
-    FVector Position3D = FVector(Position);
-    Position3D -= Center;
-    FTileCoord TileCoord = GetTileCoords(Position3D);
+    Position -= Center;
+    FTileCoord TileCoord = GetTileCoords(Position);
     float Offset = GetValueAt(TileCoord);
 
     TArray<float> MaterialIndexValues;
@@ -282,12 +279,11 @@ TArray<float> FTileSphere::GetMaterialIndexValues(FVector4 Position) const
     return MaterialIndexValues;
 }
 
-FColor FTileSphere::ColorCode(FVector4 Position) const
+FColor FTileSphere::ColorCode(FVector Position) const
 {
-	FVector Position3D = FVector(Position);
-    Position3D -= Center;
+    Position -= Center;
     
-    FTileCoord TileCoord = GetTileCoords(Position3D);
+    FTileCoord TileCoord = GetTileCoords(Position);
     FLinearColor Color = FLinearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     //Color.R = (float) TileCoord.TileX / TileCoord.TileResolution;

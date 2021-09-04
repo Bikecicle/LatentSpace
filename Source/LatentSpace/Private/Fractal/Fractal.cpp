@@ -3,7 +3,10 @@
 
 #include "Fractal/Fractal.h"
 
-FFractal::FFractal()
+FFractal::FFractal(float pScale, float pDistanceOffset, int pIterations)
+	: Scale(pScale)
+	, DistanceOffset(pDistanceOffset)
+	, Iterations(pIterations)
 {
 }
 
@@ -17,8 +20,9 @@ void FFractal::SetBase(IBaseShape* Base)
 	this->BaseShape = Base;
 }
 
-float FFractal::GetSignedDistance(FVector Origin, int Iterations) const
+float FFractal::GetSignedDistance(FVector Origin) const
 {
+	Origin /= Scale;
 	FVector4 Position = FVector4(Origin, 1.0);
 	float d = INFINITY;
 	for (int i = 0; i < Iterations; i++)
@@ -28,5 +32,8 @@ float FFractal::GetSignedDistance(FVector Origin, int Iterations) const
 			Fold->FoldPosition(Position, Origin);
 		}
 	}
-	return BaseShape->GetSignedDistance(Position);
+	float Distance = BaseShape->GetSignedDistance(Position);
+	Distance -= DistanceOffset / Scale;
+
+	return Distance;
 }

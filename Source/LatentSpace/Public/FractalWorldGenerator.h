@@ -18,13 +18,13 @@ class UFractalWorldGenerator : public UVoxelGenerator
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generator")
-		float Scale = 1.0;
+	float Scale = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generator")
-		int Iterations = 6;
+	int Iterations = 6;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generator")
-		float DistanceOffset = 0.0;
+	float DistanceOffset = 0.0f;
 
 	//~ Begin UVoxelGenerator Interface
 	virtual TVoxelSharedRef<FVoxelGeneratorInstance> GetInstance() override;
@@ -52,7 +52,4 @@ public:
 
 private:
 	FFractal Fractal;
-	const float Scale;
-	const int Iterations;
-	const float DistanceOffset;
 };
