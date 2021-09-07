@@ -84,13 +84,13 @@ FVoxelMaterial FHybridWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt Y, 
         TArray<float> MaterialIndexValues = TileSphere.GetMaterialIndexValues(FVector(X, Y, Z));
         Builder.AddMultiIndex(0, MaterialIndexValues[0]);
 	    Builder.AddMultiIndex(1, MaterialIndexValues[1]);
-        Builder.AddMultiIndex(2, 0.0f);
+		Builder.AddMultiIndex(2, 0.0f);
     }
     else
     {
-        Builder.AddMultiIndex(0, 0.0f);
-	    Builder.AddMultiIndex(1, 0.0f);
-        Builder.AddMultiIndex(2, 1.0f);
+	    Builder.AddMultiIndex(0, 0.0f);
+        Builder.AddMultiIndex(1, 0.0f);
+		Builder.AddMultiIndex(2, 1.0f);
     }
 	return Builder.Build();
 }
