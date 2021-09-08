@@ -48,18 +48,21 @@ void FHybridWorldGeneratorInstance::Init(const FVoxelGeneratorInit &InitStruct)
 	Fractal.SetBase(new FBaseBox(FVector(6, 6, 6), FVector(0, 0, 0), FVector(0, 0, 0)));
 
     // Assign morph noise seed from world seed
+
     MorphNoise.SetSeed(FNoiseManager::GetValueNoise1D(0, WorldSeed));
 }
 
 v_flt FHybridWorldGeneratorInstance::GetValueImpl(v_flt X, v_flt Y, v_flt Z, int32 LOD, const FVoxelItemStack &Items) const
 {
+	float Morph = MorphNoise.GetPerlin_3D(X / 100.0, Y / 100.0, Z / 100.0, 0.01);
 	float Distance = 0.0f;
-    if (X <= 0)
+    if (Morph >= 0)
     {
         Distance = TileSphere.GetSignedDistance(FVector(X, Y, Z));
     }
     else
     {
+
         Distance = Fractal.GetSignedDistance(FVector(X, Y, Z));
     }
     return Distance;
@@ -79,7 +82,8 @@ FVoxelMaterial FHybridWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt Y, 
 
 	// Multi index
 	Builder.SetMaterialConfig(EVoxelMaterialConfig::MultiIndex);
-    if (X <= 0)
+	float Morph = MorphNoise.GetPerlin_3D(X / 100.0, Y / 100.0, Z / 100.0, 0.01);
+    if (Morph >= 0)
     {
         TArray<float> MaterialIndexValues = TileSphere.GetMaterialIndexValues(FVector(X, Y, Z));
         Builder.AddMultiIndex(0, MaterialIndexValues[0]);
