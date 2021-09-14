@@ -53,8 +53,8 @@ FTileCoord FTileSphere::GetTileCoords(FVector Position) const
     AbsY = fabsf(Y);
     AbsZ = fabsf(Z);
 
-    double FaceXScale;
-    double FaceYScale;
+    double FaceXFrac;
+    double FaceYFrac;
 
     const double InverseSqrt2 = 0.70710676908493042;
 
@@ -68,36 +68,36 @@ FTileCoord FTileSphere::GetTileCoords(FVector Position) const
 
         if (Y == 0.0 || Y == -0.0)
         {
-            FaceXScale = 0.0;
+            FaceXFrac = 0.0;
         }
         else
         {
-            FaceXScale = sqrtf(InnerSqrt + A - B + 3.0) * InverseSqrt2;
+            FaceXFrac = sqrtf(InnerSqrt + A - B + 3.0) * InverseSqrt2;
         }
 
         if (Z == 0.0 || Z == -0.0)
         {
-            FaceYScale = 0.0;
+            FaceYFrac = 0.0;
         }
         else
         {
-            FaceYScale = sqrtf(InnerSqrt - A + B + 3.0) * InverseSqrt2;
+            FaceYFrac = sqrtf(InnerSqrt - A + B + 3.0) * InverseSqrt2;
         }
 
-        if (FaceXScale > 1.0) FaceXScale = 1.0;
-        if (FaceYScale > 1.0) FaceYScale = 1.0;
+        if (FaceXFrac > 1.0) FaceXFrac = 1.0;
+        if (FaceYFrac > 1.0) FaceYFrac = 1.0;
 
-        if (Z < 0) FaceYScale = -FaceYScale;
+        if (Z < 0) FaceYFrac = -FaceYFrac;
 
         if (X > 0)
         {
             TileCoord.Face = FTileCoord::EFace::Front;
-            if (Y > 0) FaceXScale = -FaceXScale;
+            if (Y > 0) FaceXFrac = -FaceXFrac;
         }
         else
         {
             TileCoord.Face = FTileCoord::EFace::Back;
-            if (Y < 0) FaceXScale = -FaceXScale;
+            if (Y < 0) FaceXFrac = -FaceXFrac;
         }
     }
 
@@ -113,36 +113,36 @@ FTileCoord FTileSphere::GetTileCoords(FVector Position) const
 
         if (X == 0.0 || X == -0.0)
         {
-            FaceXScale = 0.0;
+            FaceXFrac = 0.0;
         }
         else
         {
-            FaceXScale = sqrtf(InnerSqrt + A - B + 3.0) * InverseSqrt2;
+            FaceXFrac = sqrtf(InnerSqrt + A - B + 3.0) * InverseSqrt2;
         }
 
         if (Z == 0.0 || Z == -0.0)
         {
-            FaceYScale = 0.0;
+            FaceYFrac = 0.0;
         }
         else
         {
-            FaceYScale = sqrtf(InnerSqrt - A + B + 3.0) * InverseSqrt2;
+            FaceYFrac = sqrtf(InnerSqrt - A + B + 3.0) * InverseSqrt2;
         }
 
-        if (FaceXScale > 1.0) FaceXScale = 1.0;
-        if (FaceYScale > 1.0) FaceYScale = 1.0;
+        if (FaceXFrac > 1.0) FaceXFrac = 1.0;
+        if (FaceYFrac > 1.0) FaceYFrac = 1.0;
 
-        if (Z < 0) FaceYScale = -FaceYScale;
+        if (Z < 0) FaceYFrac = -FaceYFrac;
 
         if (Y > 0)
         {
             TileCoord.Face = FTileCoord::EFace::Left;
-            if (X < 0) FaceXScale = -FaceXScale;
+            if (X < 0) FaceXFrac = -FaceXFrac;
         }
         else
         {
             TileCoord.Face = FTileCoord::EFace::Right;
-            if (X > 0) FaceXScale = -FaceXScale;
+            if (X > 0) FaceXFrac = -FaceXFrac;
         }
     }
 
@@ -155,47 +155,58 @@ FTileCoord FTileSphere::GetTileCoords(FVector Position) const
 
         if (Y == 0.0 || Y == -0.0)
         {
-            FaceXScale = 0.0;
+            FaceXFrac = 0.0;
         }
         else
         {
-            FaceXScale = sqrtf(InnerSqrt + A - B + 3.0) * InverseSqrt2;
+            FaceXFrac = sqrtf(InnerSqrt + A - B + 3.0) * InverseSqrt2;
         }
 
         if (X == 0.0 || X == -0.0)
         {
-            FaceYScale = 0.0;
+            FaceYFrac = 0.0;
         }
         else
         {
-            FaceYScale = sqrtf(InnerSqrt - A + B + 3.0) * InverseSqrt2;
+            FaceYFrac = sqrtf(InnerSqrt - A + B + 3.0) * InverseSqrt2;
         }
 
-        if (FaceXScale > 1.0) FaceXScale = 1.0;
-        if (FaceYScale > 1.0) FaceYScale = 1.0;
+        if (FaceXFrac > 1.0) FaceXFrac = 1.0;
+        if (FaceYFrac > 1.0) FaceYFrac = 1.0;
 
-        if (Y > 0) FaceXScale = -FaceXScale;
+        if (Y > 0) FaceXFrac = -FaceXFrac;
 
         if (Z > 0)
         {
             TileCoord.Face = FTileCoord::EFace::Top;
-            if (X > 0) FaceYScale = -FaceYScale;
+            if (X > 0) FaceYFrac = -FaceYFrac;
         }
         else
         {
             TileCoord.Face = FTileCoord::EFace::Bottom;
-            if (X < 0) FaceYScale = -FaceYScale;
+            if (X < 0) FaceYFrac = -FaceYFrac;
         }
     }
 
-    FaceXScale = (FaceXScale + 1.0) / 2.0;
-    FaceYScale = (FaceYScale + 1.0) / 2.0;
+    // Recenter between 0 and 1
+    FaceXFrac = (FaceXFrac + 1.0) / 2.0 - 1e-8;
+    FaceYFrac = (FaceYFrac + 1.0) / 2.0 - 1e-8;
 
-    TileCoord.FaceX = (int) FMath::RoundToZero(FaceXScale * TileCoord.FaceResolution);
-    TileCoord.FaceY = (int) FMath::RoundToZero(FaceYScale * TileCoord.FaceResolution);
+    // Find tile location on face
+    TileCoord.FaceX = (int) FMath::RoundToZero(FaceXFrac * TileCoord.FaceResolution);
+    TileCoord.FaceY = (int) FMath::RoundToZero(FaceYFrac * TileCoord.FaceResolution);
 
-    TileCoord.TileX = (int) FMath::RoundToZero((FaceXScale * TileCoord.FaceResolution - TileCoord.FaceX) * TileCoord.TileResolution);
-    TileCoord.TileY = (int) FMath::RoundToZero((FaceYScale * TileCoord.FaceResolution - TileCoord.FaceY) * TileCoord.TileResolution);
+
+    float TileXFrac = FaceXFrac * TileCoord.FaceResolution - TileCoord.FaceX;
+    float TileYFrac = FaceYFrac * TileCoord.FaceResolution - TileCoord.FaceY;
+
+    // Find pixel location on tile
+    TileCoord.TileX = (int) FMath::RoundToZero(TileXFrac * TileCoord.TileResolution);
+    TileCoord.TileY = (int) FMath::RoundToZero(TileYFrac * TileCoord.TileResolution);
+
+    // Find offset from pixel for interpolation purposes
+    TileCoord.PixelX = TileXFrac * TileCoord.TileResolution - TileCoord.TileX;
+    TileCoord.PixelY = TileYFrac * TileCoord.TileResolution - TileCoord.TileY;
 
     TileCoord.Rotation = 0;
 
@@ -204,7 +215,116 @@ FTileCoord FTileSphere::GetTileCoords(FVector Position) const
 
 float FTileSphere::GetValueAt(FTileCoord TileCoord) const
 {
-    return Tiles[TileCoord.Face][TileCoord.FaceX][TileCoord.FaceY]->GetValueAt(TileCoord, Seed);
+    // Pixel locations for bilerp
+    // Q2 Q1
+    // Q3 Q4
+    FTileCoord Q1;
+    FTileCoord Q2;
+    FTileCoord Q3;
+    FTileCoord Q4;
+
+    float FracX;
+    float FracY;
+
+    // Right side
+    if (TileCoord.PixelX >= 0.5f)
+    {
+        // Top
+        if (TileCoord.PixelY >= 0.5f)
+        {
+            Q1 = TileCoord.PixelStep(1, 1);
+            Q2 = TileCoord.PixelStep(0, 1);
+            Q3 = TileCoord;
+            Q4 = TileCoord.PixelStep(1, 0);
+            
+            FracY = TileCoord.PixelY - 0.5f;
+        }
+        // Bottom
+        else
+        {
+            Q1 = TileCoord.PixelStep(1, 0);
+            Q2 = TileCoord;
+            Q3 = TileCoord.PixelStep(0, -1);
+            Q4 = TileCoord.PixelStep(1, -1);
+
+            FracY = TileCoord.PixelY + 0.5f;
+        }
+
+        FracX = TileCoord.PixelX - 0.5f;
+    }
+    // Left side
+    else
+    {
+        // Top
+        if (TileCoord.PixelY >= 0.5f)
+        {
+            Q1 = TileCoord.PixelStep(0, 1);
+            Q2 = TileCoord.PixelStep(-1, 1);
+            Q3 = TileCoord.PixelStep(-1, 0);
+            Q4 = TileCoord;
+
+            FracY = TileCoord.PixelY - 0.5f;
+        }
+        // Bottom
+        else
+        {
+            Q1 = TileCoord;
+            Q2 = TileCoord.PixelStep(-1, 0);
+            Q3 = TileCoord.PixelStep(-1, -1);
+            Q4 = TileCoord.PixelStep(0, -1);
+
+            FracY = TileCoord.PixelY + 0.5f;
+        }
+
+        FracX = TileCoord.PixelX + 0.5f;
+    }
+
+    // Pixel values for bilerp
+    float P00 = 0;
+    float P10 = 0;
+    float P01 = 0;
+    float P11 = 0;
+
+    // Fetch point values (if the tile exists)
+    if (Q1.Face != FTileCoord::EFace::None)
+    {
+        P11 = Tiles[Q1.Face][Q1.FaceX][Q1.FaceY]->GetValueAt(Q1, Seed);
+    }
+    if (Q2.Face != FTileCoord::EFace::None)
+    {
+        P01 = Tiles[Q2.Face][Q2.FaceX][Q2.FaceY]->GetValueAt(Q2, Seed);
+    }
+    if (Q3.Face != FTileCoord::EFace::None)
+    {
+        P00 = Tiles[Q3.Face][Q3.FaceX][Q3.FaceY]->GetValueAt(Q3, Seed);
+    }
+    if (Q4.Face != FTileCoord::EFace::None)
+    {
+        P10 = Tiles[Q4.Face][Q4.FaceX][Q4.FaceY]->GetValueAt(Q4, Seed);
+    }
+
+    // Handle cube corners by substituting missing pixel with average of the other three
+    if (Q1.Face == FTileCoord::EFace::None)
+    {
+        P11 = (P00 + P10 + P01) / 3.0f;
+    }
+    if (Q2.Face == FTileCoord::EFace::None)
+    {
+        P01 = (P00 + P10 + P11) / 3.0f;
+    }
+    if (Q3.Face == FTileCoord::EFace::None)
+    {
+        P00 = (P10 + P01 + P11) / 3.0f;
+    }
+    if (Q4.Face == FTileCoord::EFace::None)
+    {
+        P10 = (P00 + P01 + P11) / 3.0f;
+    }
+
+    float Value = FMath::BiLerp<float, float>(P00, P10, P01, P11, FracX, FracY);
+    //float Value = Tiles[TileCoord.Face][TileCoord.FaceX][TileCoord.FaceY]->GetValueAt(TileCoord, Seed);
+
+    return Value;
 }
 
 
@@ -287,21 +407,20 @@ FColor FTileSphere::ColorCode(FVector Position) const
     FLinearColor Color = FLinearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     //Color.R = (float) TileCoord.TileX / TileCoord.TileResolution;
-    //Color.B = (float) TileCoord.TileY / TileCoord.TileResolution;
-
+    
+    
     float Offset = GetValueAt(TileCoord);
-    Offset -= 0.125f;
-    Offset *= 10.0f;
 
-    if (Offset < 0)
+    if (Offset < 0.5)
     {
         Color.R = 1.0;
-        Color.G = 1.0 + Offset;
+        Color.G = Offset * 2.0f;
     } else {
-        Color.R = 1.0 - Offset;
+        Color.R = (1.0 - Offset) * 2.0f;
         Color.G = 1.0;
     }
     
-
+    Color.B = (float) TileCoord.TileY / TileCoord.TileResolution;
+    
     return Color.ToFColor(false);
 }

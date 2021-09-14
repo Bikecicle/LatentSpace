@@ -38,7 +38,7 @@ void FTerraGANTile::Generate(FTileCoord TileCoord, unsigned int SphereSeed)
 				// We are looking at a neighboring tile
 				if (StepX != 0 || StepY != 0)
 				{
-					Neighbor = TileCoord.Step(StepX, StepY);
+					Neighbor = TileCoord.TileStep(StepX, StepY);
 
 					// Neighboring tile is valid
 					if (Neighbor.Face != FTileCoord::EFace::None)

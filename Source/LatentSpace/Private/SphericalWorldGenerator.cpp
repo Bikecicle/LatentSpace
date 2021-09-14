@@ -45,18 +45,20 @@ FVoxelMaterial FSphericalWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt 
 
 	// RGB
 	//Builder.SetMaterialConfig(EVoxelMaterialConfig::RGB);
-	//Builder.SetColor(TileSphere.ColorCode(FVector4(X, Y, Z, 1.0)));
+	//Builder.SetColor(TileSphere.ColorCode(FVector(X, Y, Z)));
 
 	// Single index
 	//Builder.SetMaterialConfig(EVoxelMaterialConfig::SingleIndex);
 	//Builder.SetSingleIndex(0);
 
-	TArray<float> MaterialIndexValues = TileSphere.GetMaterialIndexValues(FVector(X, Y, Z));
+
 
 	// Multi index
+	TArray<float> MaterialIndexValues = TileSphere.GetMaterialIndexValues(FVector(X, Y, Z));
 	Builder.SetMaterialConfig(EVoxelMaterialConfig::MultiIndex);
 	Builder.AddMultiIndex(0, MaterialIndexValues[0]);
 	Builder.AddMultiIndex(1, MaterialIndexValues[1]);
+	
 
 	return Builder.Build();
 }

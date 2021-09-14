@@ -23,6 +23,10 @@ public:
 	int TileX;
 	/** The Y position within the tile */
 	int TileY;
+
+	float PixelX;
+
+	float PixelY;
 	/** Number of 90 degree counter-clockwise rotations to perform on coordinates */
 	int Rotation;
 
@@ -35,7 +39,8 @@ public:
 	 * @param StepY - Distance to move in the Y direction with respect to this tile's orientation (-FaceResolution, FaceResolution)
 	 * @return The new tile
 	 */
-	FTileCoord Step(int StepX, int StepY);
+	FTileCoord TileStep(int StepX, int StepY);
+	FTileCoord PixelStep(int StepX, int StepY);
 
 	unsigned int GetSeed(unsigned int SphereSeed);
 };
