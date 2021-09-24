@@ -1,0 +1,13 @@
+.git
+.vs
+.vscode
+Content
+DerivedDataCache
+Intermediate
+Saved
+Script
+Shaders
+Plugins/machine-learning-remote-ue4-master/Content
+Plugins/machine-learning-remote-ue4-master/Intermediate
+Plugins/machine-learning-remote-ue4-master/Server
+Plugins/socketio-client-ue4/Intermediate

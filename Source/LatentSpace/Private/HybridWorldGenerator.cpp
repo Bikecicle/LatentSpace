@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2021 Griffin Page
 
 #include "HybridWorldGenerator.h"
 #include "FastNoise/VoxelFastNoise.inl"
@@ -85,7 +85,7 @@ FVoxelMaterial FHybridWorldGeneratorInstance::GetMaterialImpl(v_flt X, v_flt Y, 
 	float Morph = MorphNoise.GetPerlin_3D(X / 100.0, Y / 100.0, Z / 100.0, 0.01);
     if (Morph >= 0)
     {
-        TArray<float> MaterialIndexValues = TileSphere.GetMaterialIndexValues(FVector(X, Y, Z));
+		TArray<float> MaterialIndexValues = TileSphere.GetMaterialIndexValues(FVector(X, Y, Z));
         Builder.AddMultiIndex(0, MaterialIndexValues[0]);
 	    Builder.AddMultiIndex(1, MaterialIndexValues[1]);
 		Builder.AddMultiIndex(2, 0.0f);
