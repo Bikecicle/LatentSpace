@@ -65,8 +65,6 @@ ALSFirstPersonCharacter::ALSFirstPersonCharacter(const FObjectInitializer& Objec
 	// Note: The ProjectileClass and the skeletal mesh/anim blueprints for Mesh1P, FP_Gun, and VR_Gun 
 	// are set in the derived blueprint asset named MyCharacter to avoid direct content references in C++.
 
-	VoxelInvoker = CreateDefaultSubobject<UVoxelSimpleInvokerComponent>(TEXT("VoxelInvoker"));
-
 	PrimaryActorTick.bCanEverTick = true;
 
 	GravityDirection = FVector(0, 0, -1);

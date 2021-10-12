@@ -37,10 +37,6 @@ class ALSFirstPersonCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
 
-	/** Voxel invoker */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Voxel, meta = (AllowPrivateAccess = "true"))
-	class UVoxelSimpleInvokerComponent* VoxelInvoker;
-
 public:
 	ALSFirstPersonCharacter(const FObjectInitializer& ObjectInitializer);
 
