@@ -7,10 +7,16 @@
 		{
 			"name": "UE4",
 			"path": "E:\\Program Files\\UE_4.26"
+		},
+		{
+			"path": "..\\ShooterGame"
 		}
 	],
 	"settings": {
-		"typescript.tsc.autoDetect": "off"
+		"typescript.tsc.autoDetect": "off",
+		"files.associations": {
+			"*.rh": "cpp"
+		}
 	},
 	"extensions": {
 		"recommendations": [
