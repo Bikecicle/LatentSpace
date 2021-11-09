@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Player/LSFirstPersonCharacter.h"
+#include "Tools/LSToolExcavator.h"
 #include "FirstPersonExampleProjectile.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
@@ -102,6 +103,46 @@ void ALSFirstPersonCharacter::BeginPlay()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// Inventory
+
+void ALSFirstPersonCharacter::EquipTool(ALSTool* Tool)
+{
+	if (Tool)
+	{
+		EquippedTool = Tool;
+
+		Tool->SetOwningPawn(this);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Tool usage
+
+void ALSFirstPersonCharacter::StartUseTool()
+{
+	if (!bWantsToUse)
+	{
+		bWantsToUse = true;
+		if (EquippedTool)
+		{
+			EquippedTool->DoAction();
+		}
+	}
+}
+
+void ALSFirstPersonCharacter::StopUseTool()
+{
+	if (bWantsToUse)
+	{
+		bWantsToUse = false;
+		if (EquippedTool)
+		{
+			EquippedTool->DoAction();
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
 // Input
 
 void ALSFirstPersonCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -114,7 +155,8 @@ void ALSFirstPersonCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	// Bind fire event
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ALSFirstPersonCharacter::OnFire);
+	PlayerInputComponent->BindAction("UseTool", IE_Pressed, this, &ALSFirstPersonCharacter::OnStartUseTool);
+	PlayerInputComponent->BindAction("UseTool", IE_Released, this, &ALSFirstPersonCharacter::OnStopUseTool);
 
 	// Bind movement events
 	PlayerInputComponent->BindAxis("MoveForward", this, &ALSFirstPersonCharacter::MoveForward);
@@ -127,45 +169,6 @@ void ALSFirstPersonCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	PlayerInputComponent->BindAxis("TurnRate", this, &ALSFirstPersonCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &ALSFirstPersonCharacter::LookUpAngle);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ALSFirstPersonCharacter::LookUpAtRate);
-}
-
-void ALSFirstPersonCharacter::OnFire()
-{
-	// try and fire a projectile
-	if (ProjectileClass != nullptr)
-	{
-		UWorld* const World = GetWorld();
-		if (World != nullptr)
-		{
-			const FRotator SpawnRotation = GetControlRotation();
-			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-			const FVector SpawnLocation = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
-
-			//Set Spawn Collision Handling Override
-			FActorSpawnParameters ActorSpawnParams;
-			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-
-			// spawn the projectile at the muzzle
-			World->SpawnActor<AFirstPersonExampleProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
-		}
-	}
-
-	// try and play the sound if specified
-	if (FireSound != nullptr)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-	}
-
-	// try and play a firing animation if specified
-	if (FireAnimation != nullptr)
-	{
-		// Get the animation object for the arms mesh
-		UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-		if (AnimInstance != nullptr)
-		{
-			AnimInstance->Montage_Play(FireAnimation, 1.f);
-		}
-	}
 }
 
 void ALSFirstPersonCharacter::MoveForward(float Value)
@@ -215,4 +218,14 @@ void ALSFirstPersonCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	//AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
+void ALSFirstPersonCharacter::OnStartUseTool()
+{
+	StartUseTool();
+}
+
+void ALSFirstPersonCharacter::OnStopUseTool()
+{
+	StopUseTool();
 }

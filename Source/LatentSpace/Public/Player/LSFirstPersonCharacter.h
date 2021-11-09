@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "VoxelComponents/VoxelInvokerComponent.h"
 #include "Player/GravityMovementComponent.h"
+#include "Tools/LSTool.h"
 #include "LSFirstPersonCharacter.generated.h"
 
 class UInputComponent;
@@ -20,6 +21,83 @@ UCLASS(config=Game)
 class ALSFirstPersonCharacter : public ACharacter
 {
 	GENERATED_BODY()
+
+public:
+
+	ALSFirstPersonCharacter(const FObjectInitializer& ObjectInitializer);
+
+	virtual void BeginPlay();
+
+	void Tick(float DeltaSeconds) override;
+
+	void UpdateGravity(FVector NewGravityDirection);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Inventory
+
+	void EquipTool(class ALSTool* Tool);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Tool usage
+
+	/** Tool usage */
+	void StartUseTool();
+
+	/** Tool usage */
+	void StopUseTool();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Input handlers
+
+	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
+
+	/** Handles moving forward/backward */
+	void MoveForward(float Val);
+
+	/** Handles stafing movement, left and right */
+	void MoveRight(float Val);
+
+	void TurnAngle(float Val);
+
+	void LookUpAngle(float Val);
+
+	/** Player pressed use tool action */
+	void OnStartUseTool();
+
+	/** Player released use tool action */
+	void OnStopUseTool();
+
+	/**
+	 * Called via input to turn at a given rate.
+	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
+	 */
+	void TurnAtRate(float Rate);
+
+	/**
+	 * Called via input to turn look up/down at a given rate.
+	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
+	 */
+	void LookUpAtRate(float Rate);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Reading data
+
+	/** Get casted movement componment */
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Character")
+	UGravityMovementComponent* GetGravityMovementComponent();
+
+	/** Get currently equipped tool */
+	UFUNCTION(BlueprintCallable, Category = "Game|Tool")
+	class ALSTool* GetTool() const;
+
+	/** Get tool attach point */
+	FName GetToolAttachPoint() const;
+
+	/** Get usage state */
+	UFUNCTION(BlueprintCallable, Category = "Game|Tool")
+	bool IsUsing() const;
+
+protected:
 
 	/** Pawn mesh: 1st person view (arms; seen only by self) */
 	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
@@ -37,23 +115,6 @@ class ALSFirstPersonCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
 
-public:
-	ALSFirstPersonCharacter(const FObjectInitializer& ObjectInitializer);
-
-protected:
-
-	FVector GravityDirection;
-
-	virtual void BeginPlay();
-
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Character")
-	UGravityMovementComponent* GetGravityMovementComponent();
-
-	void UpdateGravity(FVector NewGravityDirection);
-
-	void Tick(float DeltaSeconds) override;
-
-public:
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -78,39 +139,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	UAnimMontage* FireAnimation;
 
-protected:
-	/** Fires a projectile. */
-	void OnFire();
+	/** Current down direction in world space */
+	FVector GravityDirection;
 
-	/** Resets HMD orientation and position in VR. */
-	void OnResetVR();
+	/** Currently equipped tool */
+	UPROPERTY(Transient)
+	class ALSTool* EquippedTool;
 
-	/** Handles moving forward/backward */
-	void MoveForward(float Val);
-
-	/** Handles stafing movement, left and right */
-	void MoveRight(float Val);
-
-	void TurnAngle(float Val);
-
-	void LookUpAngle(float Val);
-
-	/**
-	 * Called via input to turn at a given rate.
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
-	void TurnAtRate(float Rate);
-
-	/**
-	 * Called via input to turn look up/down at a given rate.
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
-	void LookUpAtRate(float Rate);
-	
-protected:
-	// APawn interface
-	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
-	// End of APawn interface
+	/** Current using state */
+	uint8 bWantsToUse : 1;
 
 public:
 	/** Returns Mesh1P subobject **/
