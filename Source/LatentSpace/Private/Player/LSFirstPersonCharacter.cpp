@@ -10,8 +10,6 @@
 #include "GameFramework/InputSettings.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "MotionControllerComponent.h"
-#include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -88,6 +86,12 @@ void ALSFirstPersonCharacter::Tick(float DeltaSeconds)
 {
 	// Point gravity to origin for now
 	UpdateGravity(-GetActorLocation());
+
+	// Tick tool
+	if (EquippedTool != nullptr)
+	{
+		EquippedTool->TickTool(bWantsToUseTool);
+	}
 }
 
 void ALSFirstPersonCharacter::BeginPlay()
@@ -100,6 +104,10 @@ void ALSFirstPersonCharacter::BeginPlay()
 
 	// Show or hide the two versions of the gun based on whether or not we're using motion controllers.
 	Mesh1P->SetHiddenInGame(false, true);
+
+	// Default tool
+	ALSTool* DefaultTool = GetWorld()->SpawnActor<ALSToolExcavator>();
+	EquipTool(DefaultTool);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -120,25 +128,17 @@ void ALSFirstPersonCharacter::EquipTool(ALSTool* Tool)
 
 void ALSFirstPersonCharacter::StartUseTool()
 {
-	if (!bWantsToUse)
+	if (!bWantsToUseTool)
 	{
-		bWantsToUse = true;
-		if (EquippedTool)
-		{
-			EquippedTool->DoAction();
-		}
+		bWantsToUseTool = true;
 	}
 }
 
 void ALSFirstPersonCharacter::StopUseTool()
 {
-	if (bWantsToUse)
+	if (bWantsToUseTool)
 	{
-		bWantsToUse = false;
-		if (EquippedTool)
-		{
-			EquippedTool->DoAction();
-		}
+		bWantsToUseTool = false;
 	}
 }
 

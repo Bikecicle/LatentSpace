@@ -13,7 +13,6 @@ class UInputComponent;
 class USkeletalMeshComponent;
 class USceneComponent;
 class UCameraComponent;
-class UMotionControllerComponent;
 class UAnimMontage;
 class USoundBase;
 
@@ -86,16 +85,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Character")
 	UGravityMovementComponent* GetGravityMovementComponent();
 
-	/** Get currently equipped tool */
-	UFUNCTION(BlueprintCallable, Category = "Game|Tool")
-	class ALSTool* GetTool() const;
-
-	/** Get tool attach point */
-	FName GetToolAttachPoint() const;
-
-	/** Get usage state */
-	UFUNCTION(BlueprintCallable, Category = "Game|Tool")
-	bool IsUsing() const;
 
 protected:
 
@@ -147,7 +136,7 @@ protected:
 	class ALSTool* EquippedTool;
 
 	/** Current using state */
-	uint8 bWantsToUse : 1;
+	uint8 bWantsToUseTool : 1;
 
 public:
 	/** Returns Mesh1P subobject **/

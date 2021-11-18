@@ -1,31 +1,46 @@
 // Copyright 2021 Griffin Page
 
 
+#include "Kismet/GameplayStatics.h"
 #include "Tools/LSToolExcavator.h"
 
-// Sets default values
-ALSToolExcavator::ALSToolExcavator()
+ALSToolExcavator::ALSToolExcavator(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	VoxelSphereTool = CreateDefaultSubobject<UVoxelSphereTool>(TEXT("VoxelSphereTool"));
+	VoxelSphereTool->Alignment = EVoxelToolAlignment::Surface;
 }
 
-// Called when the game starts or when spawned
-void ALSToolExcavator::BeginPlay()
+void ALSToolExcavator::TickTool(bool bUse)
 {
-	Super::BeginPlay();
+	APlayerController* PlayerController = GetPawnOwner()->GetController<APlayerController>();
+	TMap<FName, bool> Keys = UVoxelTool::MakeToolKeys(true);
+	TMap<FName, float> Axes = UVoxelTool::MakeToolAxes(0.0f, 0.0f, 0.0f);
+
+	ULocalPlayer* const LocalPlayer = PlayerController->GetLocalPlayer();
+	auto* ViewportClient = LocalPlayer->ViewportClient;
+
+	FVector2D Size;
+	ViewportClient->GetViewportSize(Size);
+	FVector2D ScreenPosition = Size / 2;
 	
-}
+	APlayerCameraManager* PlayerCameraManager = PlayerController->PlayerCameraManager;
 
-// Called every frame
-void ALSToolExcavator::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+	FVoxelToolTickData TickData;
+	TickData.MousePosition = ScreenPosition;
+	TickData.CameraViewDirection = PlayerCameraManager->GetCameraRotation().Vector();
+	TickData.bEdit = bUse;
+	TickData.Keys = Keys;
+	TickData.Axes = Axes;
+	TickData.CollisionChannel = ECC_Visibility;
 
-}
+	const auto Deproject = [PlayerController = MakeWeakObjectPtr(PlayerController)](
+		const FVector2D& InScreenPosition,
+		FVector& OutWorldPosition,
+		FVector& OutWorldDirection)
+	{
+		return UGameplayStatics::DeprojectScreenToWorld(PlayerController.Get(), InScreenPosition, OutWorldPosition, OutWorldDirection);
+	};
+	TickData.Init(Deproject);
 
-void ALSToolExcavator::DoAction()
-{
-	SphereTool->DoEdit();
+	VoxelSphereTool->AdvancedTick(PlayerController->GetWorld(), TickData, {});
 }

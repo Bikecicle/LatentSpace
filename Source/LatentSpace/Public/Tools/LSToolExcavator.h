@@ -14,20 +14,14 @@ class LATENTSPACE_API ALSToolExcavator : public ALSTool
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
-	ALSToolExcavator();
+
+	ALSToolExcavator(const FObjectInitializer& ObjectInitializer);
+
+	virtual void TickTool(bool bUse) override;
 
 protected:
 	
-	UVoxelSphereTool* SphereTool;
-
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	virtual void DoAction() override;
+	UPROPERTY(Transient)
+	class UVoxelSphereTool* VoxelSphereTool;
 
 };
